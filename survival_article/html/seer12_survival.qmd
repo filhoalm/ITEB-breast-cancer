@@ -15,6 +15,145 @@ Our main goal is to evaluate the 5-year relative survival for malignant breast c
 
 # Methods
 
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# Read the dataset from the provided URL
+library(readr)
+library(ggplot2)
+library(plyr)
+library(dplyr)
+url <- "https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/proportion_unk_stage.csv"
+df <- read_csv(url)
+
+
+# Assuming df is your data frame
+names(df) <- c("year", "stage", "rate", "cases", "py")
+
+# Replace stage values >= 4 with 4 to group as one category
+df$stage[df$stage >= 4] <- 4 
+
+# Convert 'stage' to a factor with meaningful labels
+df$stage <- factor(df$stage, levels = 0:4,
+                   labels = c("In situ", "Localized", "Regional", "Distant", "Unknown"))
+
+# Convert 'year' to numeric and adjust based on a specific logic (Adding 1991)
+# Ensure no 'Year of diagnosis' strings are present; they should be filtered or converted before this step
+df$year <- as.numeric(df$year) + 1991
+
+# Data Summary: Sum the number of cases by year and stage
+df_summary <- df %>%
+  group_by(year, stage) %>%
+  summarise(cases = sum(cases), .groups = 'drop')
+
+# Additional Data Summary: Sum the number of cases by year
+df_summary_year <- df %>%
+  group_by(year) %>%
+  summarise(total_cases = sum(cases), .groups = 'drop')
+
+# Merging the summaries by year to compare stage-specific and total cases
+df_merged <- merge(df_summary, df_summary_year, by = "year")
+
+# Display the head of the merged summary
+df_merged$prop<-round((df_merged$cases / df_merged$total_cases)*100,2)
+
+df_unknown_er<-subset(df_merged, df_merged$year>=2004 & df_merged$stage == "Unknown")
+
+# Create a line plot in Lance style
+
+a<-ggplot(df_unknown_er, aes(x = year, y = prop, group = 1)) +
+  geom_line(color = "black", size = 1) +  # Change line color and size as needed
+  ylim(0,10) +
+  geom_point(color = "black", size = 2) + # Add points and customize their color and size as needed
+  theme_minimal() +
+  labs(
+    title = "Stage",
+    x = "Year",
+    y = "% of Unknown Stage"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5), # Center the plot title
+    text = element_text(size = 12),
+    aspect.ratio = 2.5 # Example aspect ratio, adjust as needed
+  )
+
+
+## Proportion Subtype
+
+# Read the dataset from the provided URL
+url <- "https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/proportion_unk_subtype.csv"
+df <- read_csv(url)
+
+# Assuming df is your data frame
+names(df) <- c("year", "stage", "rate", "cases", "py")
+
+# Replace stage values >= 4 with 4 to group as one category
+df$stage[df$stage >= 5] <- 4 
+
+# Convert 'stage' to a factor with meaningful labels
+df$stage <- factor(df$stage, levels = 0:4,
+                   labels = c("HR+/HER2+","HR-/HER2+","HR+/HER2-","HR-/HER2-","Unknown"))
+
+# Convert 'year' to numeric and adjust based on a specific logic (Adding 1991)
+# Ensure no 'Year of diagnosis' strings are present; they should be filtered or converted before this step
+df$year <- as.numeric(df$year) + 1991
+
+# Data Summary: Sum the number of cases by year and stage
+df_summary <- df %>%
+  group_by(year, stage) %>%
+  summarise(cases = sum(cases), .groups = 'drop')
+
+# Additional Data Summary: Sum the number of cases by year
+df_summary_year <- df %>%
+  group_by(year) %>%
+  summarise(total_cases = sum(cases), .groups = 'drop')
+
+# Merging the summaries by year to compare stage-specific and total cases
+df_merged <- merge(df_summary, df_summary_year, by = "year")
+
+# Display the head of the merged summary
+
+df_merged$prop<-round((df_merged$cases / df_merged$total_cases)*100,2)
+
+df_unknown_er<-subset(df_merged, df_merged$year>=2004 & df_merged$stage == "Unknown")
+
+# Create a line plot in Lance style
+
+b<-ggplot(df_unknown_er, aes(x = year, y = prop, group = 1)) +
+  geom_line(color = "black", size = 1) +  # Change line color and size as needed
+  ylim(0,10) +
+  geom_point(color = "black", size = 2) + # Add points and customize their color and size as needed
+  theme_minimal() +
+  labs(
+    title = "Subtype",
+    x = "Year",
+    y = "% of Unknown Subtype"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5), # Center the plot title
+    text = element_text(size = 12),
+    aspect.ratio = 2.5 # Example aspect ratio, adjust as needed
+  )
+
+
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(gridExtra)
+grid.arrange(a,b,
+             ncol=2,
+             top = grid::textGrob('', gp=grid::gpar(fontsize=3)))
+
+
+```
+
+
+
+Figure A presents the annual proportions of breast cancer cases with unknown ER status. Figure B details the yearly proportions of breast cancers with ER-negative status."
+
+
+
+
+
 Total number of cases included 1626352.
 The first exclusion criterion—applied was the exclusion of death certificate and autopsy cases 14,324 (0.6%). Than, 361,260 cases, representing 22.2% of the selected cases, were excluded for being subsequent primary occurrences (Sequence Number higher than 1) rather than first primary cancer instances. Lastly, 2,734 cases (0.2%) were removed due to being alive with no survival time recorded.
 
