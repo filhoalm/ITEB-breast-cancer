@@ -1,0 +1,588 @@
+---
+toc: true
+title: "Five-year relative survival for malignant breast cancer in the U.S: A population-based study using SEER 12, 1992–2015"
+author: "AMF"
+format: html
+editor: visual
+date: "January 24, 2024"
+date-modified: last-modified
+---
+
+# Ratinale
+
+Our main goal is to evaluate the 5-year relative survival for malignant breast cancer by subtype, and  investigate the extent to which survival differences among the major racial and ethnic groups have progressed over the span of nearly three decades, from 1992 to 2020. 
+
+
+# Methods
+
+Total number of cases included 1626352.
+The first exclusion criterion—applied was the exclusion of death certificate and autopsy cases 14,324 (0.6%). Than, 361,260 cases, representing 22.2% of the selected cases, were excluded for being subsequent primary occurrences (Sequence Number higher than 1) rather than first primary cancer instances. Lastly, 2,734 cases (0.2%) were removed due to being alive with no survival time recorded.
+
+
+```{r, message=FALSE, warning=FALSE, echo = F}
+
+
+library(knitr)
+library(kableExtra)
+
+# Define the updated table data
+table_data <- data.frame(
+  NumberSelected = c(2323651, 2309327, 1990346, 1990346, 1990346,
+                     1990346, 1990346, 1990346, 1990346, 1629086,
+                     1629086, 1629086, 1629086, 1629086, 1629086, 1626352),
+  NumberExcluded = c(2918834, 14324, 318981, 0, 0,
+                     0, 0, 0, 0, 361260,
+                     0, 0, 0, 0, 2734, 0),
+  Statement = c("{Age at Diagnosis...} = '35-39 years', '40-44 years'...",
+                "Exclude death certificate or autopsy cases",
+                "Select only malignant cancers",
+                "Select only known age",
+                "Exclude age values not in table",
+                "Exclude Race and origin recode values not in table",
+                "Exclude Sex values not in table",
+                "Exclude State values not in table",
+                "Exclude County values not in table",
+                "First Primary Only (Sequence Number 0 or 1)",
+                "Invalid vital status",
+                "Unknown survival duration",
+                "Calculation dates invalid",
+                "Coded survival duration conflicts...",
+                "Alive with no survival time",
+                "Cases for which an expected rate could not be found")
+)
+
+# Calculate the proportions
+#table_data$ProportionExcluded <- table_data$NumberExcluded / table_data$NumberSelected
+table_data$ProportionExcluded <- (table_data$NumberExcluded / table_data$NumberSelected)*100
+table_data$ProportionExcluded<-round(table_data$ProportionExcluded,1)
+
+# Format the updated table using `kable`
+elegant_table <- kable(table_data, format = "html", col.names = c("Number Selected", "Number Excluded", "Statement", "Proportion Excluded"),
+                       align = c('r', 'r', 'l', 'r'), caption = "Case Exclusion Counts") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), font_size = 15, full_width = F)
+
+# Print the table to the console (if you're not using R Markdown)
+
+elegant_table
+#print(elegant_table, format = "html")
+#print(table_data)
+
+# Add the proportion column to the existing data frame
+#table_data$ProportionExcluded <- (table_data$NumberExcluded / table_data$NumberSelected)*100
+#table_data$ProportionExcluded<-round(table_data$ProportionExcluded,1)
+
+# Show the data frame with the new column
+#print(table_data)
+
+
+```
+
+# Results
+
+
+##### Analysis of 5-Year Age-Standardized Net Survival by Breast Cancer Subtype (2010-2020)
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+#| label: fig4
+#| fig-cap: "Figure 4. 5-Year Age-Standardized Net Survival by Breast Cancer Subtype (2010-2020)"
+#| 
+# It's generally better to avoid repeatedly installing packages. Instead, check if the package is already installed.
+if (!require("downloader", quietly = TRUE)) {
+  install.packages("downloader")
+}
+library(downloader)
+
+# Set the URL where the zip file is located
+zip_url <- "https://github.com/filhoalm/Breast_cancer/raw/main/Survival.zip"
+
+# Download the file to the local directory
+zip_file <- "Survival.zip"
+download(url = zip_url, destfile = zip_file, mode = "wb") # Ensure the mode is set to 'wb' for binary files
+
+# Unzip the file to extract its contents
+unzip(zip_file, exdir = ".") # Extract to the current working directory
+
+# Now, specify the correct path to the file 'breast_net_5y_stage_age_std.csv' within the 'Survival' folder
+
+# Check if the file exists in the unzipped directory
+csv_file <- "Survival/breast_net_5y_stage_subtype2010_age_std.csv"
+if(file.exists(csv_file)) {
+  # Read the CSV file
+  df <- read.csv(csv_file)
+  #print(head(df)) # Display the first few rows of the dataframe
+} else {
+  stop("The file does not exist in the specified directory.")
+}
+
+# Rename variables. This can be done in a single step without the intermediate assignment.
+# Note: Make sure the indices match the columns you wish to rename.
+names(df)[1:5] <- c("type", "year", "race", "stage", "subtype")
+
+# Ensure 'df' is a data frame (this is likely unnecessary as read.csv already returns a data frame)
+df <- as.data.frame(df)
+
+# Clean 'year' column and adjust values. In the original code, the rows with 'Year of diagnosis' are assumed to be headers and are removed after conversion to numeric, which would cause an error. They should be removed or handled before conversion.
+df <- df[!df$year == "Year of diagnosis", ]
+df$year <- as.numeric(df$year) + 1991
+
+# Subset for the year 1991 (the original had a mismatched comment)
+df <- subset(df, year == 1991)
+
+# The cleaning of columns 'Net.Relative', 'Observed.Age.Std', and 'Observed' involves repetitive patterns
+# that can be wrapped in a function or loop.
+clean_column <- function(column) {
+  column <- gsub("[#%]", "", column)
+  column <- as.numeric(trimws(column))
+  return(column)
+}
+
+df$Net.Relative <- clean_column(df$Net.Relative)
+df$Observed.Age.Std <- clean_column(df$Observed.Age.Std)
+df$Observed <- clean_column(df$Observed)
+
+# Recoding categorical variables using a more efficient approach
+
+# Recode the race and stage values
+df$race <- factor(df$race, levels = c(0, 1, 2, 3, 4, 5),
+                  labels = c("NHW", "NHB", "AIAN", "API", "HIS", "Unknown"))
+df$stage <- factor(df$stage, levels = c(0, 1, 2, 3, 4, 5, 6),
+                   labels = c("In situ", "Localized", "Regional", "Distant", "Localized/regional (Prostate cases)", "Unstaged", "Blank(s)"))
+df$subtype <- factor(df$subtype, levels = c(0, 1, 2, 3, 4, 5),
+                labels = c("HR+/HER2+", "HR-/HER2+", "HR+/HER2-", "HR-/HER2-", "Unknown", "Recode not available"))
+
+
+# Create a subset based on multiple conditions
+df1 <- subset(df, race %in% c("NHW", "NHB", "HIS", "API") &
+                stage %in% c("Localized", "Regional", "Distant") &
+                subtype %in% c("HR+/HER2+", "HR-/HER2+", "HR+/HER2-", "HR-/HER2-"))
+
+# Further filtering based on 'type'
+df2 <- subset(df1, type == 1)
+
+# Reorder the 'stage' factor levels
+df2$stage <- factor(df2$stage, levels = c("Localized", "Regional", "Distant"))
+
+# Define colors that are appropriate for the 'stage' variable
+stage_colors <- setNames(c("#E69F00", "#56B4E9", "#009E73"), c("Localized", "Regional", "Distant"))
+
+# Generate the bar plot
+library(ggplot2)
+gg<-ggplot(data = df2, aes(x = race, y = Observed.Age.Std, fill = stage)) +
+  geom_bar(stat = "identity", position = position_dodge(), color = "black") +
+  geom_text(aes(label = Observed.Age.Std), vjust = 1.6, color = "black", 
+            position = position_dodge(0.9), size = 3.5) +
+  scale_fill_manual(values = stage_colors) +
+  facet_grid(stage ~ subtype) +
+  coord_flip() +
+  theme_minimal() +
+  theme(panel.grid = element_blank(),
+        panel.background = element_rect(fill = "white", colour = "white"),
+        axis.text = element_text(size = 10, color = "black"),
+        axis.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5, size = 12, face = "bold"),
+        legend.background = element_blank(),
+        legend.key = element_blank(),
+        legend.title = element_text(face = "bold", size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = "right") +
+  labs(x = "Race and ethnicity", y = "Age std Net/Pohar Perme", fill = "Stage",
+       title = "Malignant breast by subtype (2010-2020)")
+
+# Display the plot
+print(gg)
+
+```
+
+
+##### Temporal Trends in 5-Year Age-Adjusted Net Survival by Race, Ethnicity, and Cancer Stage
+In observing the localized stage across all groups, the data suggests a trend towards stabilization over time. Notably, Non-Hispanic White (NHW), Hispanic (HIS), and Asian or Pacific Islander (API) populations demonstrated a marginal but consistent increase in survival for the regional stage, with rates below 1%. Non-Hispanic Black (NHB) cohort displayed a more pronounced annual improvement of 1.1% from the period between 1992 to 2015. Distant stage revealed significant and increased in survival for NHW (2.4%), NHB (2.1%), HIS (2.9%), and API (2.1%). 
+
+
+:::{.callout-note}
+- Red: Localized
+- Blue: Regional
+- Green: Distant
+:::
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+#| label: fig5
+#| fig-cap: "Figure 5. 5-Year Age-Adjusted Net Survival by Race, Ethnicity, and Cancer Stage"
+
+
+# It's generally better to avoid repeatedly installing packages. Instead, check if the package is already installed.
+if (!require("downloader", quietly = TRUE)) {
+  install.packages("downloader")
+}
+library(downloader)
+library(ggplot2)
+library(gridExtra)
+ 
+
+# Set the URL where the zip file is located
+zip_url <- "https://github.com/filhoalm/Breast_cancer/raw/main/Survival.zip"
+
+# Download the file to the local directory
+zip_file <- "Survival.zip"
+download(url = zip_url, destfile = zip_file, mode = "wb") # Ensure the mode is set to 'wb' for binary files
+
+# Unzip the file to extract its contents
+unzip(zip_file, exdir = ".") # Extract to the current working directory
+
+# Now, specify the correct path to the file 'breast_net_5y_stage_age_std.csv' within the 'Survival' folder
+
+# Check if the file exists in the unzipped directory
+csv_file <- "Survival/breast_net_5y_stage_age_std.csv"
+if(file.exists(csv_file)) {
+  # Read the CSV file
+  df <- read.csv(csv_file)
+  #print(head(df)) # Display the first few rows of the dataframe
+} else {
+  stop("The file does not exist in the specified directory.")
+}
+
+# Rename variables. This can be done in a single step without the intermediate assignment.
+# Note: Make sure the indices match the columns you wish to rename.
+names(df)[1:5] <- c("type", "year", "race", "stage")
+
+# Ensure 'df' is a data frame (this is likely unnecessary as read.csv already returns a data frame)
+df <- as.data.frame(df)
+
+# Clean 'year' column and adjust values. In the original code, the rows with 'Year of diagnosis' are assumed to be headers and are removed after conversion to numeric, which would cause an error. They should be removed or handled before conversion.
+df <- df[!df$year == "Year of diagnosis", ]
+df$year <- as.numeric(df$year) + 1991
+
+# Subset for the year 1991 (the original had a mismatched comment)
+#df <- subset(df, year == 1991) # 1992-2020
+#df <- subset(df, df$year > 2010 & df$year <=2015)
+df <- subset(df, year > 1991)
+
+# The cleaning of columns 'Net.Relative', 'Observed.Age.Std', and 'Observed' involves repetitive patterns
+# that can be wrapped in a function or loop.
+clean_column <- function(column) {
+  column <- gsub("[#%]", "", column)
+  column <- as.numeric(trimws(column))
+  return(column)
+}
+
+df <- transform(df,
+                Observed.Age.Std = clean_column(Observed.Age.Std),
+                Net.Relative.Age.Std = clean_column(Net.Relative.Age.Std),
+                Net.Relative = clean_column(Net.Relative),
+                Observed = clean_column(Observed)
+)
+
+# Recoding categorical variables using a more efficient approach
+
+# Recode the race and stage values
+df$race <- factor(df$race, levels = c(0, 1, 2, 3, 4, 5),
+                  labels = c("NHW", "NHB", "AIAN", "API", "HIS", "Unknown"))
+df$stage <- factor(df$stage, levels = c(0, 1, 2, 3, 4, 5, 6),
+                   labels = c("In situ", "Localized", "Regional", "Distant", "Localized/regional (Prostate cases)", "Unstaged", "Blank(s)"))
+# df$subtype <- factor(df$subtype, levels = c(0, 1, 2, 3, 4, 5),
+#                      labels = c("HR+/HER2+", "HR-/HER2+", "HR+/HER2-", "HR-/HER2-", "Unknown", "Recode not available"))
+
+
+# Create a subset based on multiple conditions
+df1 <- subset(df, race %in% c("NHW", "NHB", "HIS", "API") &
+                stage %in% c("Localized", "Regional", "Distant"))
+
+# Further filtering based on 'type'
+df2 <- subset(df1, type == 1)
+
+
+# Reorder the 'stage' factor levels
+df2$stage <- factor(df2$stage, levels = c("Localized", "Regional", "Distant"))
+
+# Define colors that are appropriate for the 'stage' variable
+stage_colors <- setNames(c("#E69F00", "#56B4E9", "#009E73"), c("Localized", "Regional", "Distant"))
+
+
+ # # Function to generate plot for a given race
+ # # Function to generate plot for a given race with decreased size
+ # create_race_plot <- function(data, selected_race) {
+ #   ggplot(data = data[data$race == selected_race, ],
+ #          aes(x = year, y = Net.Relative.Age.Std, color = factor(stage))) +
+ #     geom_point(size = 2, shape = 19) + # Decrease point size
+ #     geom_line(aes(group = stage), size = 0.8) + # Decrease line size
+ #     scale_color_brewer(palette = "Set1") +
+ #     labs(title = selected_race, x = "Year of follow-up", y = "Net Survival (%)") +
+ #     theme_minimal(base_size = 8) + # Decrease base font size
+ #     theme(
+ #       plot.title = element_text(face = "bold", size = 16), # Decrease title font size
+ #       axis.title = element_text(face = "bold", size = 8), # Decrease axis title font size
+ #       axis.text = element_text(color = "black", size = 6), # Decrease axis text font size
+ #       axis.line = element_line(color = "black"),
+ #       panel.grid.major = element_line(color = "grey80"),
+ #       panel.grid.minor = element_blank(),
+ #       panel.background = element_rect(fill = "white"),
+ #       legend.position = "none", # Exclude legend from all plots
+ #       plot.margin = margin(5, 5, 5, 5) # Reduce plot margins if necessary
+ #     )
+ # }
+ # # List of races to plot
+ # races <- c("NHW", "NHB", "HIS", "API")
+ # 
+ # # Create a list to store plots for each race
+ # race_plots <- list()
+ # 
+ # # Loop over the races and create each plot
+ # for (race in races) {
+ #   race_plots[[race]] <- create_race_plot(df2, race)
+ # }
+ # 
+ # # Combine all plots into a single grid arrange object
+ # race_grid_plot <- do.call(grid.arrange, c(race_plots, ncol = 4))
+
+
+df3<-subset(df2, df2$race=="NHW")
+a<-ggplot(data = df3, aes(x = year, y = Net.Relative.Age.Std, colour = factor(stage))) +
+  geom_point(size = 3, shape = 19) +  # Use shape 19 for filled circles
+  geom_line(aes(group = stage), size = 1) +  # Connect points by 'stage'
+  scale_colour_brewer(palette = "Set1", name = "Stage") +  # Use 'Set1' palette from ColorBrewer for distinct colors
+  theme_minimal(base_size = 10) +  # Starting point for the theme
+  theme(
+    plot.title = element_text(face = "bold", size = 20),
+    axis.title = element_text(face = "bold"),
+    legend.position = "none",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.box.background = element_rect(colour = "grey80"),
+    panel.grid.major = element_line(colour = "grey80"),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    axis.text = element_text(colour = "black"),
+    axis.line = element_line(colour = "black"),
+  ) +
+  labs(
+    title = "NHW",
+    #subtitle = "HR+/HER2+",
+    x = "Year of follow-up",
+    y = "Net Survival (%)",
+    colour = "Stage"
+  )+
+  guides(color = guide_legend(title = "stage"), fill = guide_legend(title = "stage"))
+
+
+#
+df4<-subset(df2, df2$race=="NHB")
+b<-ggplot(data = df4, aes(x = year, y = Net.Relative.Age.Std, colour = factor(stage))) +
+  geom_point(size = 3, shape = 19) +  # Use shape 19 for filled circles
+  geom_line(aes(group = stage), size = 1) +  # Connect points by 'stage'
+  scale_colour_brewer(palette = "Set1", name = "Stage") +  # Use 'Set1' palette from ColorBrewer for distinct colors
+  theme_minimal(base_size = 10) +  # Starting point for the theme
+  theme(
+    plot.title = element_text(face = "bold", size = 20),
+    axis.title = element_text(face = "bold"),
+    legend.position = "none",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.box.background = element_rect(colour = "grey80"),
+    panel.grid.major = element_line(colour = "grey80"),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    axis.text = element_text(colour = "black"),
+    axis.line = element_line(colour = "black")
+  ) +
+  labs(
+    title = "NHB",
+    #subtitle = "HR+/HER2+",
+    x = "Year of follow-up",
+    y = "Net Survival (%)",
+    colour = "Stage"
+  )+
+  guides(color = guide_legend(title = "stage"), fill = guide_legend(title = "stage"))
+
+#
+df5<-subset(df2, df2$race=="HIS")
+c<-ggplot(data = df5, aes(x = year, y = Net.Relative.Age.Std, colour = factor(stage))) +
+  geom_point(size = 3, shape = 19) +  # Use shape 19 for filled circles
+  geom_line(aes(group = stage), size = 1) +  # Connect points by 'stage'
+  scale_colour_brewer(palette = "Set1", name = "Stage") +  # Use 'Set1' palette from ColorBrewer for distinct colors
+  theme_minimal(base_size = 10) +  # Starting point for the theme
+  theme(
+    plot.title = element_text(face = "bold", size = 20),
+    axis.title = element_text(face = "bold"),
+    legend.position = "none",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.box.background = element_rect(colour = "grey80"),
+    panel.grid.major = element_line(colour = "grey80"),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    axis.text = element_text(colour = "black"),
+    axis.line = element_line(colour = "black")
+  ) +
+  labs(
+    title = "HIS",
+    #subtitle = "HR+/HER2+",
+    x = "Year of follow-up",
+    y = "Net Survival (%)",
+    colour = "Stage"
+  )+
+  guides(color = guide_legend(title = "status"), fill = guide_legend(title = "status"))
+
+#
+df6<-subset(df2, df2$race=="API")
+d<-ggplot(data = df6, aes(x = year, y = Net.Relative.Age.Std, colour = factor(stage))) +
+  geom_point(size = 3, shape = 19) +  # Use shape 19 for filled circles
+  geom_line(aes(group = stage), size = 1) +  # Connect points by 'stage'
+  scale_colour_brewer(palette = "Set1", name = "Stage") +  # Use 'Set1' palette from ColorBrewer for distinct colors
+  theme_minimal(base_size = 10) +  # Starting point for the theme
+  theme(
+    plot.title = element_text(face = "bold", size = 20),
+    axis.title = element_text(face = "bold"),
+    legend.position = "none",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 12),
+    legend.box.background = element_rect(colour = "grey80"),
+    panel.grid.major = element_line(colour = "grey80"),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white"),
+    axis.text = element_text(colour = "black"),
+    axis.line = element_line(colour = "black")
+  ) +
+  labs(
+    title = "API",
+    #subtitle = "HR+/HER2+",
+    x = "Year of follow-up",
+    y = "Net Survival (%)",
+    colour = "Stage"
+  )+
+  guides(color = guide_legend(title = "status"), fill = guide_legend(title = "status"))
+
+
+# 
+# #pdf(file=paste(MyPath,"Figure 19.pdf",sep=""),width=4.2,height=5.2)
+#grid.arrange(a,b,c,d,ncol=4,
+#              #bottom = textGrob("Line in black represents the model selected", x = 0.2),
+              #top = grid::textGrob('', gp=grid::gpar(fontsize=8)))
+#dev.off()
+
+ 
+grid.arrange(a,b,c,d, ncol = 4,heights=c(15,10))
+ 
+
+```
+
+##### Estimated annual percentage change (EAPC) in 5-year age-adjusted net survival
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+# Create the data frame
+data <- data.frame(
+  race = rep(c("NHW", "NHB", "API", "HIS"), each = 3),
+  stage = rep(c("Localized", "Regional", "Distant"), times = 4),
+  eapc = c(0.0632228, 0.5099972, 2.4263695, 
+           0.3152329, 1.1070423, 2.1153695, 
+           0.0414952, 0.3930158, 2.9525179, 
+           0.1389664, 0.5295265, 2.1883767),
+  eapc_up = c(0.6457773, 1.1396866, 3.5584197, 
+              0.9123383, 1.7914545, 3.5258697, 
+              0.6279400, 1.0341732, 4.1502866, 
+              0.7319316, 1.1758132, 3.3310755),
+  eapc_low = c(-0.5159598, -0.1157719, 1.3066943, 
+               -0.2783395, 0.4272320, 0.7240868, 
+               -0.5415318, -0.2440728, 1.7685239, 
+               -0.4505084, -0.1126319, 1.0583146)
+)
+
+```
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+#| label: fig6
+#| fig-cap: "Figure 6. 5-Year Age-Adjusted Net Survival by Race, Ethnicity, and Cancer Stage"
+
+# Create the lollipop chart using ggplot2
+# Set factor levels for the stage to reorder
+data$stage <- factor(data$stage, levels = c("Localized", "Regional", "Distant"))
+
+# Set colors for the points
+colors <- c("Localized" = "#E69F00", "Regional" = "#56B4E9", "Distant" = "#009E73")
+
+# Create the lollipop chart using ggplot2 following Lancet style
+ggplot(data, aes(x = reorder(interaction(race, stage, sep = " - "), eapc), y = eapc)) + 
+  geom_segment(aes(xend = interaction(race, stage, sep = " - "), yend = 0), color = "gray70") +
+  geom_point(aes(color = stage), size=5) +
+  scale_color_manual(values = colors) +
+  coord_flip() +
+  theme_minimal(base_size = 14) +
+  labs(x = " ",
+       y = "EAPC",
+       title = "EAPC in 5-Year Age-Adjusted Net Surviva",
+       #caption = "Data Source: [Your Data Source]"
+       ) +
+  theme(text = element_text(family = "sans"),
+        axis.text.x = element_text(angle = 90, hjust = 1, face = "plain"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold"),
+        legend.title = element_text(face = "bold"),
+        legend.position = "bottom",
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+        plot.caption = element_text(size = 8, face = "italic", hjust = 0)) +
+  guides(color = guide_legend(title = "Stage"))
+
+# Print the plot
+
+```
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+# Load necessary libraries
+library(Rcan) # Assuming Rcan is a library you have access to
+
+# Subset the original dataframe
+df2a <- df2[c(2,3,4,19)]
+
+# Perform the function (assuming it returns a data frame or similar object)
+result <- csu_eapc(df2a, "Net.Relative.Age.Std", "year", 
+                    group_by=c("race", "stage"))
+
+# Display the result as a table
+# If you are in an R Markdown document and using Quarto, you could use:
+#knitr::kable(result)
+
+# Or using gt package
+# gt::gt(result)
+
+# If you meant to create contingency tables for categorical data
+# and 'result' contains categorical variables, you would do:
+#table_result <- table(result$column1, result$column2) # Replace column1 and column2 with actual column names
+#knitr::kable(table_result)
+
+
+# Format the updated table using `kable`
+elegant_table <- kable(result, format = "html", col.names = c("race", "stage", "apc", "eapc_up", "eapc_low"),
+                       align = c('r', 'r', 'l', 'r'), caption = "Annual Percent Change") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), font_size = 15, full_width = F)
+
+# Print the table to the console (if you're not using R Markdown)
+elegant_table
+
+
+
+
+
+```
+
+
+# Discussion
+
+#### Bullet Points
+
+- Interestingly, our preliminary analysis of the 5-year relative survival (SEER22) for HR+/HER2- breast cancer suggests much lower survival rates for the NBH population, particularly at the regional and distant stages.
+
+- I was speculating whether some of these differences in survival could, in part, reflect variabilities in chemotherapy patterns among populations (as discussed in the article) and also some of the community-level health factors, such as poverty and the socioeconomic status (SES) index.
+
+
+# References:
+
+
+
+
+
+
+
