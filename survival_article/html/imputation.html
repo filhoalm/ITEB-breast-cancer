@@ -9,7 +9,7 @@
 <meta name="author" content="AMF">
 <meta name="dcterms.date" content="2024-01-31">
 
-<title>Simple Imputation - malignant breast cancer by ER using SEER 12, 1992–2020</title>
+<title>Simple Imputation - malignant breast cancer by ER using SEER 22, 2000–2020</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -113,7 +113,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Simple Imputation - malignant breast cancer by ER using SEER 12, 1992–2020</h1>
+<h1 class="title">Simple Imputation - malignant breast cancer by ER using SEER 22, 2000–2020</h1>
 </div>
 
 
@@ -137,7 +137,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 16, 2024</p>
+      <p class="date-modified">February 17, 2024</p>
     </div>
   </div>
     
@@ -148,7 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="data-source" class="level4">
 <h4 class="anchored" data-anchor-id="data-source">Data Source</h4>
-<p>National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER12) Program Populations (1992-2020). Available at: <a href="https://www.seer.cancer.gov/popdata">www.seer.cancer.gov/popdata</a>. Released November 2023. National Cancer Institute, DCCPS, Surveillance Research Program.</p>
+<p>National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER22) Program Populations (2000-2020). Available at: <a href="https://www.seer.cancer.gov/popdata">www.seer.cancer.gov/popdata</a>. Released November 2023. National Cancer Institute, DCCPS, Surveillance Research Program.</p>
 </section>
 <section id="morphology" class="level4">
 <h4 class="anchored" data-anchor-id="morphology">Morphology</h4>
@@ -183,7 +183,7 @@ Note
 <p>Discuss the process involved in accessing locked data files from SEER12 that have been stored on GitHub.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the dataset from the provided URL</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/Incidence/see12/seer12_er.csv"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/seer22_race_er.csv"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
