@@ -1,0 +1,112 @@
+[System]
+Output filename=C:\Users\filhoam\Desktop\Breast\survival_article\data\seer12_stage_race.csv
+Matrix filename=Survival Session-2 Matrix-5
+Database name=Incidence - SEER Research Plus Data, 12 Registries, Nov 2022 Sub (1992-2020) - Linked To County Attributes - Total U.S., 1969-2021 Counties
+
+[Session Options]
+Type=Survival
+Rate filename=U.S. by SES/geography/race (NHW,NHB,NHAIAN,NHAPI,HISP) 1992-2020, Ages 0-99, State-county (modeled by varied state-county-ses)
+Statistic=Relative Survival
+SurvivalMethod=Actuarial
+SurvivalBeginMonth=Month of diagnosis recode
+SurvivalBeginYear=Year of diagnosis
+SurvivalEndMonth=Month of follow-up recode
+SurvivalEndYear=Year of follow-up recode
+SurvivalVitalStatus=Vital status recode (study cutoff used)
+StudyCutoffDate=12/2020
+LostToFollowupDate=12/2020
+NumberOfIntervals=60
+MonthsPerInterval=1
+RatesDisplayedAs=Percents
+
+[Export Options]
+GZipped=false
+Variable format=numeric
+File format=DOS/Windows
+Field delimiter=comma
+Missing character=space
+Fields with delimiter in quotes=false
+Remove thousands separators=true
+Flags included=true
+Variable names included=true
+Column Variables as Stats=false
+
+[Summary Page Variables]
+Var1Name=Page type
+Var2Name=Year of diagnosis
+Var3Name=Race and origin recode (NHW, NHB, NHAIAN, NHAPI, Hispanic)
+Var4Name=Combined Summary Stage (2004+)
+Var5Name=Summary Interval
+Var6Name=N
+Var7Name=Median Obs
+Var8Name=Median Rel
+Var9Name=Observed
+Var10Name=Expected
+Var11Name=Relative
+Var12Name=SE Obs
+Var13Name=SE Rel
+Var14Name=Obs Cum CIs Lower
+Var15Name=Obs Cum CIs Upper
+Var16Name=Rel Cum CIs Lower
+Var17Name=Rel Cum CIs Upper
+
+[Format=Page type]
+0=Life Page
+1=Summary Page
+2=Z-Statistics Page
+3=Period Life Page
+4=Period Summary Page
+5=Age Std Life Page
+
+[Format=Year of diagnosis]
+0=1992-2020
+1=1992
+2=1993
+3=1994
+4=1995
+5=1996
+6=1997
+7=1998
+8=1999
+9=2000
+10=2001
+11=2002
+12=2003
+13=2004
+14=2005
+15=2006
+16=2007
+17=2008
+18=2009
+19=2010
+20=2011
+21=2012
+22=2013
+23=2014
+24=2015
+25=2016
+26=2017
+27=2018
+28=2019
+29=2020
+
+[Format=Race and origin recode (NHW, NHB, NHAIAN, NHAPI, Hispanic)]
+0=Non-Hispanic White
+1=Non-Hispanic Black
+2=Non-Hispanic American Indian/Alaska Native
+3=Non-Hispanic Asian or Pacific Islander
+4=Hispanic (All Races)
+5=Non-Hispanic Unknown Race
+
+[Format=Combined Summary Stage (2004+)]
+0=In situ
+1=Localized
+2=Regional
+3=Distant
+4=N/A
+5=Unknown/unstaged
+6=Blank(s)
+
+[Format=Summary Interval]
+0=60 mo
+

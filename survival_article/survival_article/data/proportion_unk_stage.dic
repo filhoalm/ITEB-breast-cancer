@@ -1,0 +1,71 @@
+[System]
+Output filename=C:\Users\filhoam\Desktop\Breast\Incidence\see12\proportion_unk_stage.csv
+Matrix filename=Rate Session-5 Matrix-2
+Database name=Incidence - SEER Research Plus Data, 12 Registries, Nov 2022 Sub (1992-2020) - Linked To County Attributes - Total U.S., 1969-2021 Counties
+
+[Session Options]
+Type=Rate
+RatesAsCasesPer=100000
+
+[Export Options]
+GZipped=false
+Variable format=numeric
+File format=DOS/Windows
+Field delimiter=comma
+Missing character=space
+Fields with delimiter in quotes=false
+Remove thousands separators=true
+Flags included=true
+Variable names included=true
+Column Variables as Stats=false
+
+[Variables]
+Var1Name=Year of diagnosis
+Var1Dimension=Row
+Var2Name=Combined Summary Stage (2004+)
+Var2Dimension=Row
+Var3Name=Crude Rate
+Var4Name=Count
+Var5Name=Population
+
+[Format=Year of diagnosis]
+0=1992-2020
+1=1992
+2=1993
+3=1994
+4=1995
+5=1996
+6=1997
+7=1998
+8=1999
+9=2000
+10=2001
+11=2002
+12=2003
+13=2004
+14=2005
+15=2006
+16=2007
+17=2008
+18=2009
+19=2010
+20=2011
+21=2012
+22=2013
+23=2014
+24=2015
+25=2016
+26=2017
+27=2018
+28=2019
+29=2020
+
+[Format=Combined Summary Stage (2004+)]
+0=In situ
+1=Localized
+2=Regional
+3=Distant
+4=N/A
+5=Unknown/unstaged
+6=Blank(s)
+
