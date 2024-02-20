@@ -111,7 +111,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#references" id="toc-references" class="nav-link active" data-scroll-target="#references">References</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link active" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#infiltrating-ductal-carcinoma-idc-1" id="toc-infiltrating-ductal-carcinoma-idc-1" class="nav-link" data-scroll-target="#infiltrating-ductal-carcinoma-idc-1">Infiltrating Ductal Carcinoma (IDC)</a></li>
+  <li><a href="#ductal-carcinoma-in-situ-dcis-1" id="toc-ductal-carcinoma-in-situ-dcis-1" class="nav-link" data-scroll-target="#ductal-carcinoma-in-situ-dcis-1">Ductal Carcinoma In Situ (DCIS)</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
 </div>
@@ -152,12 +158,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
+<section id="methods" class="level1">
+<h1>Methods</h1>
 <section id="data-source" class="level4">
 <h4 class="anchored" data-anchor-id="data-source">Data Source</h4>
 <p>National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER22) Program Populations (2000-2020). Available at: <a href="https://www.seer.cancer.gov/popdata">www.seer.cancer.gov/popdata</a>. Released November 2023. National Cancer Institute, DCCPS, Surveillance Research Program.</p>
 </section>
 <section id="morphology" class="level4">
 <h4 class="anchored" data-anchor-id="morphology">Morphology</h4>
+</section>
+<section id="ductal-carcinoma-in-situ-dcis" class="level4">
+<h4 class="anchored" data-anchor-id="ductal-carcinoma-in-situ-dcis">Ductal Carcinoma In Situ (DCIS)</h4>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>8201/2: Cribriform carcinoma in situ</li>
+<li>‘8500/2: Intraductal carcinoma, noninfiltrating, NOS’</li>
+<li>‘8501/2: Comedocarcinoma, noninfiltrating’</li>
+<li>‘8503/2: Noninfiltrating intraductal papillary adenocarcinoma’</li>
+<li>‘8507/2: Intraductal micropapillary carcinoma’</li>
+<li>‘8523/2: Intraductal with other types of carcinoma in situ’</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="infiltrating-ductal-carcinoma-idc" class="level4">
 <h4 class="anchored" data-anchor-id="infiltrating-ductal-carcinoma-idc">Infiltrating Ductal Carcinoma (IDC)</h4>
@@ -192,24 +223,10 @@ Note
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/seer22_race_er.csv"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="imputation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Figure A presents the annual proportions of breast cancer cases with unknown ER status. Figure B details the yearly proportions of breast cancers with ER-negative status.”</p>
 </section>
-</section>
-<section id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype." class="level4">
-<h4 class="anchored" data-anchor-id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype.">Proportion of unknown by ER status and breast cancer subtype.</h4>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="imputation_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
 <section id="simple-imputation-for-malignant-breast-cancer-by-er" class="level5">
 <h5 class="anchored" data-anchor-id="simple-imputation-for-malignant-breast-cancer-by-er">Simple imputation for malignant breast cancer by ER</h5>
-<p>A simple imputation method to correct the rates of ER-positive and ER-negative was based on the method proposed by<a href="https://pubmed.ncbi.nlm.nih.gov/21753181/">Anderson at al., 2011</a></p>
+<p>A simple imputation method to correct the rates of ER-positive and ER-negative was based on the method proposed by<a href="https://pubmed.ncbi.nlm.nih.gov/21753181/">Anderson et al., 2011</a></p>
 <p>in brief:</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
@@ -239,6 +256,30 @@ N^C_{at} = (1 - \hat{\pi}_{at}) \times I^0_{at} \tag{4}
 <p>provide unbiased estimators of the true numbers of ER-positive and ER-negative breast cancers in the population.</p>
 </div>
 </div>
+</section>
+</section>
+</section>
+<section id="results" class="level1">
+<h1>Results</h1>
+<section id="infiltrating-ductal-carcinoma-idc-1" class="level2">
+<h2 class="anchored" data-anchor-id="infiltrating-ductal-carcinoma-idc-1">Infiltrating Ductal Carcinoma (IDC)</h2>
+<section id="proportion-of-unknown-by-er-status-and-proportion-of-breast-cancer-er-negative." class="level4">
+<h4 class="anchored" data-anchor-id="proportion-of-unknown-by-er-status-and-proportion-of-breast-cancer-er-negative.">Proportion of unknown by ER status and proportion of breast cancer ER negative.</h4>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 1 presents the annual proportions of breast cancer cases with unknown ER status. Figure B details the yearly proportions of breast cancers with ER-negative status.”</p>
+</section>
+<section id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype." class="level4">
+<h4 class="anchored" data-anchor-id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype.">Proportion of unknown by ER status and breast cancer subtype.</h4>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 2 presents the annual proportions of breast cancer cases with unknown ER status and subtype by race and ethnicity.</p>
 <div class="cell">
 
 </div>
@@ -248,9 +289,22 @@ N^C_{at} = (1 - \hat{\pi}_{at}) \times I^0_{at} \tag{4}
 <div class="cell">
 
 </div>
+</section>
+<section id="incidence-rates-for-breast-cancer-overall-and-imputed" class="level4">
+<h4 class="anchored" data-anchor-id="incidence-rates-for-breast-cancer-overall-and-imputed">Incidence rates for breast cancer overall and imputed</h4>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="imputation_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 3 Incidence rates for breast cancer overall and imputed rates of estrogen receptor (ER)–positive and ER-negative breast cancers(2010-2020).</p>
+</section>
+</section>
+<section id="ductal-carcinoma-in-situ-dcis-1" class="level2">
+<h2 class="anchored" data-anchor-id="ductal-carcinoma-in-situ-dcis-1">Ductal Carcinoma In Situ (DCIS)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
