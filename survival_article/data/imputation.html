@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="AMF">
+<meta name="dcterms.date" content="2024-01-31">
+
+<title>Simple Imputation - Breast cancer (IDC and DCIS) by ER using SEER 22, 2010–2020</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="imputation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="imputation_files/libs/quarto-html/quarto.js"></script>
+<script src="imputation_files/libs/quarto-html/popper.min.js"></script>
+<script src="imputation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="imputation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="imputation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="imputation_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="imputation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="imputation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="imputation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#methods" id="toc-methods" class="nav-link active" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#infiltrating-ductal-carcinoma-idc-1" id="toc-infiltrating-ductal-carcinoma-idc-1" class="nav-link" data-scroll-target="#infiltrating-ductal-carcinoma-idc-1">Infiltrating Ductal Carcinoma (IDC)</a></li>
+  <li><a href="#ductal-carcinoma-in-situ-dcis-1" id="toc-ductal-carcinoma-in-situ-dcis-1" class="nav-link" data-scroll-target="#ductal-carcinoma-in-situ-dcis-1">Ductal Carcinoma In Situ (DCIS)</a>
+  <ul class="collapse">
+  <li><a href="#bullet-points" id="toc-bullet-points" class="nav-link" data-scroll-target="#bullet-points">Bullet points</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Simple Imputation - Breast cancer (IDC and DCIS) by ER using SEER 22, 2010–2020</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>AMF </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 31, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">February 20, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<section id="data-source" class="level4">
+<h4 class="anchored" data-anchor-id="data-source">Data Source</h4>
+<p>National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER22) Program Populations (2000-2020). Available at: <a href="https://www.seer.cancer.gov/popdata">www.seer.cancer.gov/popdata</a>. Released November 2023. National Cancer Institute, DCCPS, Surveillance Research Program.</p>
+</section>
+<section id="morphology" class="level4">
+<h4 class="anchored" data-anchor-id="morphology">Morphology</h4>
+</section>
+<section id="ductal-carcinoma-in-situ-dcis" class="level4">
+<h4 class="anchored" data-anchor-id="ductal-carcinoma-in-situ-dcis">Ductal Carcinoma In Situ (DCIS)</h4>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>8201/2: Cribriform carcinoma in situ</li>
+<li>‘8500/2: Intraductal carcinoma, noninfiltrating, NOS’</li>
+<li>‘8501/2: Comedocarcinoma, noninfiltrating’</li>
+<li>‘8503/2: Noninfiltrating intraductal papillary adenocarcinoma’</li>
+<li>‘8507/2: Intraductal micropapillary carcinoma’</li>
+<li>‘8523/2: Intraductal with other types of carcinoma in situ’</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="infiltrating-ductal-carcinoma-idc" class="level4">
+<h4 class="anchored" data-anchor-id="infiltrating-ductal-carcinoma-idc">Infiltrating Ductal Carcinoma (IDC)</h4>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>8500/3</strong>: Infiltrating duct carcinoma, NOS’</li>
+<li><strong>8523/3</strong>: Infiltrating duct mixed with other types of carcinoma’</li>
+</ul>
+</div>
+</div>
+<p>ER Status Recode for Breast Cancer (1990+): ‘Positive’, ‘Negative’, ‘Borderline/Unknown’, ’Recode not available</p>
+</section>
+<section id="load-required-libraries" class="level4">
+<h4 class="anchored" data-anchor-id="load-required-libraries">load required libraries</h4>
+<div class="cell">
+
+</div>
+<section id="importing-encrypted-seer12-data-files-from-github-repository" class="level5">
+<h5 class="anchored" data-anchor-id="importing-encrypted-seer12-data-files-from-github-repository">Importing Encrypted SEER12 Data Files from GitHub Repository</h5>
+<p>Discuss the process involved in accessing locked data files from SEER12 that have been stored on GitHub.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the dataset from the provided URL</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/seer22_race_er.csv"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="simple-imputation-for-malignant-breast-cancer-by-er" class="level5">
+<h5 class="anchored" data-anchor-id="simple-imputation-for-malignant-breast-cancer-by-er">Simple imputation for malignant breast cancer by ER</h5>
+<p>A simple imputation method to correct the rates of ER-positive and ER-negative was based on the method proposed by<a href="https://pubmed.ncbi.nlm.nih.gov/21753181/">Anderson et al., 2011</a></p>
+<p>in brief:</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We developed a simple imputation model to correct the apparent rates of ER-positive and ER-negative breast cancer for missing ER data. For each age <code>a</code> and year <code>t</code>, we partitioned the observed total number of incident breast cancers <span class="math inline">\(0^I_{at}\)</span> according to ER status. Hence</p>
+<p><span class="math display">\[
+I^I_{at} = P^0_{at} + N^0_{at} + U^0_{at} \tag{1}
+\]</span></p>
+<p>in which <span class="math inline">\(P^0_{at}\)</span>, <span class="math inline">\(N^0_{at}\)</span>, and <span class="math inline">\(U^0_{at}\)</span> are the observed ER-positive, ER-negative, and unknown counts, respectively. Prior studies have analyzed <span class="math inline">\(P^0_{at}\)</span> and <span class="math inline">\(N^0_{at}\)</span>, but if <span class="math inline">\(U^0_{at}\)</span> varies by either <code>a</code> or <code>t</code> these results may be biased. Our imputation method estimates the unobserved complete data</p>
+<p><span class="math display">\[
+I^0_{at} = P^C_{at} + N^C_{at} \tag{2}
+\]</span></p>
+<p>in which <span class="math inline">\(P^C_{at}\)</span> and <span class="math inline">\(N^C_{at}\)</span> are the true numbers of ER-positive and ER-negative counts, respectively.</p>
+<p>Our model assumes that unknown ER status is missing at random within a single year of age <code>a</code> and calendar year <code>t</code> of diagnosis. Under this model, the observed probability <span class="math inline">\(\pi_{at} = \dfrac{P^0_{at}}{P^0_{at} + N^0_{at}}\)</span> on the basis of patients for whom we have complete information is an unbiased estimator of the true probability at the population level that an incident breast cancer diagnosed among women age <code>a</code> and calendar year <code>t</code> is ER positive. The equations</p>
+<p><span class="math display">\[
+P^C_{at} = \hat{\pi}_{at} \times I^0_{at} \tag{3}
+\]</span> <span class="math display">\[
+N^C_{at} = (1 - \hat{\pi}_{at}) \times I^0_{at} \tag{4}
+\]</span></p>
+<p>provide unbiased estimators of the true numbers of ER-positive and ER-negative breast cancers in the population.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="results" class="level1">
+<h1>Results</h1>
+<section id="infiltrating-ductal-carcinoma-idc-1" class="level2">
+<h2 class="anchored" data-anchor-id="infiltrating-ductal-carcinoma-idc-1">Infiltrating Ductal Carcinoma (IDC)</h2>
+<section id="proportion-of-unknown-by-er-status-and-proportion-of-breast-cancer-er-negative." class="level4">
+<h4 class="anchored" data-anchor-id="proportion-of-unknown-by-er-status-and-proportion-of-breast-cancer-er-negative.">Proportion of unknown by ER status and proportion of breast cancer ER negative.</h4>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 1 presents the annual proportions of breast cancer cases with unknown ER status. Figure B details the yearly proportions of breast cancers with ER-negative status.”</p>
+</section>
+<section id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype." class="level4">
+<h4 class="anchored" data-anchor-id="proportion-of-unknown-by-er-status-and-breast-cancer-subtype.">Proportion of unknown by ER status and breast cancer subtype.</h4>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 2 presents the annual proportions of breast cancer cases with unknown ER status and subtype by race and ethnicity.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+</section>
+<section id="incidence-rates-for-breast-cancer-overall-and-imputed" class="level4">
+<h4 class="anchored" data-anchor-id="incidence-rates-for-breast-cancer-overall-and-imputed">Incidence rates for breast cancer overall and imputed</h4>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Figure 3 Incidence rates for breast cancer overall and imputed rates of estrogen receptor (ER)–positive and ER-negative breast cancers(2010-2020).</p>
+</section>
+</section>
+<section id="ductal-carcinoma-in-situ-dcis-1" class="level2">
+<h2 class="anchored" data-anchor-id="ductal-carcinoma-in-situ-dcis-1">Ductal Carcinoma In Situ (DCIS)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="imputation_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="bullet-points" class="level3">
+<h3 class="anchored" data-anchor-id="bullet-points">Bullet points</h3>
+</section>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<p>Anderson WF, Katki HA, Rosenberg PS. Incidence of Breast Cancer in the United States: Current and Future Trends. J Natl Cancer Inst. 2011 Sep 21;103(18):1397-1402. doi: 10.1093/jnci/djr257. Epub 2011 Jul 13. PMID: 21753181; PMCID: PMC3176776.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
