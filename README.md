@@ -66,6 +66,7 @@ View the Quarto version of the analysis [here](https://filhoalm.github.io/Breast
 
 ## Relative Survival analysis
 View the Quarto version of the analysis [here](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/survival.html).
+SEER12: https://filhoalm.github.io/Breast_cancer/Survival_snapshot/seer12_survival.html
 
 ## WerR Live Version
 Access the interactive WerR live version [here](https://filhoalm.github.io/Breast_cancer/test.html).
