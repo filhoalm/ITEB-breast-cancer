@@ -1,63 +1,41 @@
-# ITEB Breast Cancer Research Working Group - SEER Data Analysis
+# **ITEB Breast Cancer Research Working Group - SEER Data Analysis**
 
-## Data Source
-National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER) Program Populations (1975-2020). Available at: [www.seer.cancer.gov/popdata](https://www.seer.cancer.gov/popdata). Released May 2023. National Cancer Institute, DCCPS, Surveillance Research Program, February 2022S ed.
+## **Data Source**
+This analysis is based on data sourced from the National Cancer Institute. This data is part of the Surveillance, Epidemiology, and End Results (SEER) Program Populations from 1975-2020. The data was officially released in May 2023 and it was drawn from the National Cancer Institute, DCCPS, Surveillance Research Program's February 2022S edition. For further details, please click [here](https://www.seer.cancer.gov/popdata).
 
-## Morphology
+## **Morphology**
 
-### Ductal Carcinoma In Situ (DCIS)
-Morphology codes for DCIS:
-- '8201/2: Cribriform carcinoma in situ'
-- '8500/2: Intraductal carcinoma, noninfiltrating, NOS'
-- '8501/2: Comedocarcinoma, noninfiltrating'
-- '8503/2: Noninfiltrating intraductal papillary adenocarcinoma'
-- '8507/2: Intraductal micropapillary carcinoma'
-- '8523/2: Intraductal with other types of carcinoma in situ'
-
-ER Status Recode for Breast Cancer (1990+): 'Positive', 'Negative', 'Borderline/Unknown', 'Recode not available'
-
-### Infiltrating Ductal Carcinoma (IDC)
-Morphology codes for IDC:
-- '8500/3: Infiltrating duct carcinoma, NOS'
-- '8523/3: Infiltrating duct mixed with other types of carcinoma'
+### **Ductal Carcinoma In Situ (DCIS)**
+The Morphology codes for DCIS include:
+- 8201/2: Cribriform carcinoma in situ
+- 8500/2: Intraductal carcinoma, noninfiltrating, NOS
+- 8501/2: Comedocarcinoma, noninfiltrating
+- 8503/2: Noninfiltrating intraductal papillary adenocarcinoma
+- 8507/2: Intraductal micropapillary carcinoma
+- 8523/2: Intraductal with other types of carcinoma in situ
 
 ER Status Recode for Breast Cancer (1990+): 'Positive', 'Negative', 'Borderline/Unknown', 'Recode not available'
 
-## Dataset Availability
+### **Infiltrating Ductal Carcinoma (IDC)**
+The Morphology codes for IDC include:
+- 8500/3: Infiltrating duct carcinoma, NOS
+- 8523/3: Infiltrating duct mixed with other types of carcinoma
 
-### Incidence Data
+ER Status Recode for Breast Cancer (1990+): 'Positive', 'Negative', 'Borderline/Unknown', 'Recode not available'
 
-#### SEER8 Research Plus
-- IDC and DCIS by age, year, ER status, from 1979 to 2020:
-  - DCIS: [dcis.csv](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/dataCheck/dcis.csv)
-  - IDC: [idc.csv](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/dataCheck/idc.csv)
+## **Dataset Availability**
 
-#### SEER13 Research Plus
-- Malignant breast cancer by race and ethnicity, year, age, ER status, HER status from 1992 to 2018: [breast_er_her_11072023.csv](https://github.com/filhoalm/Breast_cancer/blob/main/forecasting/data/breast_er_her_11072023.csv)
-- Malignant breast cancer by year, age, ER status, HER status, PR status from 1992 to 2018: [breast_er_her_pr_1182023.csv](https://github.com/filhoalm/Breast_cancer/blob/main/forecasting/data/breast_er_her_pr_1182023.csv)
+### **Incidence Data**
 
-### SEER Updates - 2022
+#### *SEER8 Research Plus*
+IDC and DCIS data segregated by age, year, and ER status, (spanning from 1979 to 2020), is available for:
+- [DCIS](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/dataCheck/dcis.csv)
+- [IDC](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/dataCheck/idc.csv)
 
-Starting with the 1975-2019 SEER Research Data (November 2021 submission), Detroit is no longer included in any databases. Illinois and Texas are included in the new 22-registry database. For more information, visit [SEER Registries](https://seer.cancer.gov/registries/terms.html).
+#### *SEER13 Research Plus*
+Data on malignant breast cancer classified by race and ethnicity, year, age, ER status, and HER status (from 1992 to 2018) is available [here](https://github.com/filhoalm/Breast_cancer/blob/main/forecasting/data/breast_er_her_11072023.csv).
 
-#### SEER12 Data
-- Malignant breast cancer (ER and HER2) by race and ethnicity, age, and year: [seer12_1102024.csv](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/forecasting/data/seer12_1102024.csv)
-- Malignant breast cancer (ER, HER2, and PR status) by age and year: [seer12_1102024.csv](https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/forecasting/data/seer12_1102024.csv)
-
-### Survival Data
-
-Survival files are available in a .zip file: [Survival.zip](https://github.com/filhoalm/Breast_cancer/blob/main/Survival.zip)
-
-#### Case Listing
-- Malignant breast cancer in females by age, race and ethnicity, ER status, PR status, HER2 status, from 1992 to 2020.
-  - 1-year censored follow-up: [case_listing_1y.csv](https://github.com/filhoalm/Breast_cancer/blob/main/Survival.zip)
-  - 5-year censored follow-up: [case_listing_5y.csv](https://github.com/filhoalm/Breast_cancer/blob/main/Survival.zip)
-
-#### Net Survival - Pohar-Perme Method
-- 5-year censored follow-up: [net_survival_5y_er_pr_her_seer12.csv](https://github.com/filhoalm/Breast_cancer/blob/main/Survival.zip)
-
-## Simple imputation
-https://filhoalm.github.io/Breast_cancer/Incidence/imputation/imputation.html
+Malignant breast cancer data segmented by year, age, ER status, HER status, and PR
 
 # **Results**
 
@@ -67,9 +45,12 @@ For detailed results and discussion on DCIS vs IDC as per Ismail's comment, refe
 ## **Incidence Analysis of SEER22**
 The comprehensive analysis of SEER22 incidence data is available in [Quarto version](https://filhoalm.github.io/Breast_cancer/Incidence/seer22/Incidence_seer22.html).
 
+## **Simple Imputation**
+You can find the conducted [Simple imputation here](https://filhoalm.github.io/Breast_cancer/Incidence/imputation/imputation.html)
+
 ## **Relative Survival Analysis**
 Links to detailed Relative Survival Analyses:
-- [OverView](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/survival.html)
+- [Overview](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/survival.html)
 - [SEER12 Specific](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/seer12_survival.html)
 
 ## **Live Interactive WerR Version**
