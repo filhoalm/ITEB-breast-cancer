@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="AMF">
+<meta name="dcterms.date" content="2024-01-24">
+
+<title>Breast cancer - IDC vs DCIS</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="breast_idc_dcis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="breast_idc_dcis_files/libs/quarto-html/quarto.js"></script>
+<script src="breast_idc_dcis_files/libs/quarto-html/popper.min.js"></script>
+<script src="breast_idc_dcis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="breast_idc_dcis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="breast_idc_dcis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="breast_idc_dcis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="breast_idc_dcis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="breast_idc_dcis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="breast_idc_dcis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Breast cancer - IDC vs DCIS</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>AMF </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 24, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">March 15, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<!-- # Methods -->
+<!-- #### Data Source -->
+<!-- National Cancer Institute. Surveillance, Epidemiology, and End Results (SEER 8) Program Populations (1975-2020). Available at: [www.seer.cancer.gov/popdata](https://www.seer.cancer.gov/popdata). Released May 2023. National Cancer Institute, DCCPS, Surveillance Research Program, February 2022S ed. -->
+<!-- ## Morphology -->
+<!-- #### Ductal Carcinoma In Situ (DCIS) -->
+<!-- ::: callout-note -->
+<!-- -   **8201/2**: Cribriform carcinoma in situ -->
+<!-- -   **8500/2**: Intraductal carcinoma, noninfiltrating, NOS -->
+<!-- -   **8501/2**: Comedocarcinoma, noninfiltrating -->
+<!-- -   **8503/2**: Noninfiltrating intraductal papillary adenocarcinoma -->
+<!-- -   **8507/2**: Intraductal micropapillary carcinoma -->
+<!-- -   **8523/2**: Intraductal with other types of carcinoma in situ -->
+<!-- ::: -->
+<!-- ' -->
+<!-- #### Infiltrating Ductal Carcinoma (IDC) -->
+<!-- ::: callout-note -->
+<!-- -   **8500/3**: Infiltrating duct carcinoma, NOS' -->
+<!-- -   **8523/3**: Infiltrating duct mixed with other types of carcinoma' -->
+<!-- ::: -->
+<!-- ER Status Recode for Breast Cancer (1990+): 'Positive', 'Negative', 'Borderline/Unknown', 'Recode not available -->
+<!-- You can access the repository and download the rate files using the following link: -->
+<!-- [GitHub Repository for Breast Cancer Rate Files](https://github.com/filhoalm/ITEB-breast-cancer/blob/main/breast_seer8.zip) -->
+<!-- ## Results -->
+<section id="figure-1.-trends-in-age-standardized-incidence-rates-for-breast-cancer-by-subtype." class="level5">
+<h5 class="anchored" data-anchor-id="figure-1.-trends-in-age-standardized-incidence-rates-for-breast-cancer-by-subtype.">Figure 1. Trends in Age-Standardized Incidence Rates for Breast Cancer, by subtype.</h5>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="figure-2a-and-b.-trends-in-age-standardized-incidence-rates-of-breast-cancer-infiltrating-ductal-carcinoma-idc-classified-by-er-status-and-age-group-from-1990-to-2020" class="level5">
+<h5 class="anchored" data-anchor-id="figure-2a-and-b.-trends-in-age-standardized-incidence-rates-of-breast-cancer-infiltrating-ductal-carcinoma-idc-classified-by-er-status-and-age-group-from-1990-to-2020">Figure 2A and B. Trends in Age-Standardized Incidence Rates of Breast Cancer Infiltrating Ductal Carcinoma (IDC) Classified by ER Status and Age Group, From 1990 to 2020</h5>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<!-- ### Figure 3 - ASR, DCIS by ER -->
+<!-- Figure 3. Trends in Age-Standardized Incidence Rates of Breast Cancer Ductal Carcinoma In Situ (DCIS) Classified by ER Status and Age Group, From 1990 to 2020 -->
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="figure-3.-proportion-of-breast-cancer-subtypes-with-unknown-er-status" class="level5">
+<h5 class="anchored" data-anchor-id="figure-3.-proportion-of-breast-cancer-subtypes-with-unknown-er-status">Figure 3. Proportion of Breast Cancer Subtypes with Unknown ER Status</h5>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<!-- ### Figure 5 - Incidence rate ratio referent to 1980 -->
+<!-- ```{r, message=FALSE, warning=FALSE, echo=F} -->
+<!-- # 35-84 -->
+<!-- url <- "https://github.com/filhoalm/ITEB-breast-cancer/blob/main/breast_seer8.zip?raw=true" -->
+<!-- zip_file <- "breast_seer8.zip" -->
+<!-- # Download zip file -->
+<!-- download(url, zip_file, mode = "wb") -->
+<!-- # Unzip the file -->
+<!-- unzip(zip_file) -->
+<!-- csv_file <- "breast_seer8/seer8_IDC_year.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_IDC_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data<-data1 -->
+<!-- data$index<-"IDC" -->
+<!-- # DCIS -->
+<!-- csv_file <- "breast_seer8/seer8_DCIS_year.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_DCIS_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data1$index<-"DCIS" -->
+<!-- data3<-rbind(data, data1) -->
+<!-- # Create the scatterplot -->
+<!-- d1<-ggplot(data3, aes(x = year, y = ratio, color = index)) + -->
+<!--   geom_point(size = 1.5) + -->
+<!--   geom_line() + -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 2002, y = 1, xend = 2002, yend = 12), colour = "gray") +  -->
+<!--   #annotate("text", x = 2002, y = 12, label = "Ref 2002", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 1980, y = 1, xend = 1980, yend = 7.5), colour = "gray") +   # Add shortened vertical line at year 1990 -->
+<!--   #geom_vline(xintercept = 1990, color = "gray") +    # Add vertical line at year 1990 -->
+<!--   #annotate("text", x = 1980, y = 8, label = "Ref 1980", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   ylim(0,12)+ -->
+<!--   labs( -->
+<!--     title = "35 - 84 yo",   # Figure title -->
+<!--     x = "year",     # x-axis label -->
+<!--     y = "Incidence relative to 1980")  +   # y-axis label -->
+<!--   theme_classic() +  # Lancet style -->
+<!--   theme( -->
+<!--     plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center title and adjust its properties  -->
+<!--     axis.text.x = element_text(size = 8, angle = 0),  # Adjust x-axis label properties -->
+<!--     axis.text.y = element_text(size = 8), # Adjust y-axis label properties -->
+<!--     axis.title.x = element_text(size = 10),  # Adjust x-axis title properties -->
+<!--     axis.title.y = element_text(size = 10),  # Adjust y-axis title properties -->
+<!--     plot.margin = margin(t = 15, b = 10, l = 15, r = 10),  # Adjust plot margins -->
+<!--     panel.grid.major = element_blank(),  # Remove major grid -->
+<!--     panel.grid.minor = element_blank(),  # Remove minor grid -->
+<!--     panel.background = element_rect(fill = "white"),  # Background color is white -->
+<!--     legend.background = element_rect(fill = "white"), -->
+<!--     legend.position = "bottom", -->
+<!--     legend.text = element_text(size = 5) -->
+<!--   )+ -->
+<!--   scale_color_manual(values = c("IDC" = "black", "DCIS" = "gray"))+ -->
+<!--   labs(color=NULL) -->
+<!-- ## 35-49 -->
+<!-- url <- "https://github.com/filhoalm/ITEB-breast-cancer/blob/main/breast_seer8.zip?raw=true" -->
+<!-- zip_file <- "breast_seer8.zip" -->
+<!-- # Download zip file -->
+<!-- download(url, zip_file, mode = "wb") -->
+<!-- # Unzip the file -->
+<!-- unzip(zip_file) -->
+<!-- csv_file <- "breast_seer8/seer8_IDC_year_3049.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_IDC_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data<-data1 -->
+<!-- data$index<-"IDC" -->
+<!-- # DCIS -->
+<!-- csv_file <- "breast_seer8/seer8_DCIS_year_3549.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_DCIS_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data1$index<-"DCIS" -->
+<!-- data3<-rbind(data, data1) -->
+<!-- # Create the scatterplot -->
+<!-- d2<-ggplot(data3, aes(x = year, y = ratio, color = index)) + -->
+<!--   geom_point(size = 1.5) + -->
+<!--   geom_line() + -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 2002, y = 1, xend = 2002, yend = 12), colour = "gray") +  -->
+<!--   #annotate("text", x = 2002, y = 12, label = "Ref 2002", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 1980, y = 1, xend = 1980, yend = 7.5), colour = "gray") +   # Add shortened vertical line at year 1990 -->
+<!--   #geom_vline(xintercept = 1990, color = "gray") +    # Add vertical line at year 1990 -->
+<!--   #annotate("text", x = 1980, y = 8, label = "Ref 1980", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   ylim(0,12)+ -->
+<!--   labs( -->
+<!--     title = "35 - 49 yo",   # Figure title -->
+<!--     x = "year",     # x-axis label -->
+<!--     y = "Incidence relative to 1980")  +   # y-axis label -->
+<!--   theme_classic() +  # Lancet style -->
+<!--   theme( -->
+<!--     plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center title and adjust its properties  -->
+<!--     axis.text.x = element_text(size = 8, angle = 0),  # Adjust x-axis label properties -->
+<!--     axis.text.y = element_text(size = 8), # Adjust y-axis label properties -->
+<!--     axis.title.x = element_text(size = 10),  # Adjust x-axis title properties -->
+<!--     axis.title.y = element_text(size = 10),  # Adjust y-axis title properties -->
+<!--     plot.margin = margin(t = 15, b = 10, l = 15, r = 10),  # Adjust plot margins -->
+<!--     panel.grid.major = element_blank(),  # Remove major grid -->
+<!--     panel.grid.minor = element_blank(),  # Remove minor grid -->
+<!--     panel.background = element_rect(fill = "white"),  # Background color is white -->
+<!--     legend.background = element_rect(fill = "white"), -->
+<!--     legend.position = "bottom", -->
+<!--     legend.text = element_text(size = 5) -->
+<!--   )+ -->
+<!--   scale_color_manual(values = c("IDC" = "black", "DCIS" = "gray"))+ -->
+<!--   labs(color=NULL) -->
+<!-- # 50-84 -->
+<!-- url <- "https://github.com/filhoalm/ITEB-breast-cancer/blob/main/breast_seer8.zip?raw=true" -->
+<!-- zip_file <- "breast_seer8.zip" -->
+<!-- # Download zip file -->
+<!-- download(url, zip_file, mode = "wb") -->
+<!-- # Unzip the file -->
+<!-- unzip(zip_file) -->
+<!-- csv_file <- "breast_seer8/seer8_IDC_year_5084.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_IDC_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data<-data1 -->
+<!-- data$index<-"IDC" -->
+<!-- # DCIS -->
+<!-- csv_file <- "breast_seer8/seer8_DCIS_year_5084.csv" -->
+<!-- # Read the CSV file -->
+<!-- data1 <- read_csv(csv_file) -->
+<!-- #data1 <- read_csv("C:/Users/filhoam/Desktop/Ismail/data/seer8_DCIS_year.csv") -->
+<!-- names(data1)<-c("year", "rate", "cases", "py") -->
+<!-- data1 <- data1[data1$year > 0, ] -->
+<!-- data1$year <- data1$year + 1974  # Add 1974 to each value -->
+<!-- # Calculate the reference rate (1980) -->
+<!-- ref <- data1[data1$year == 1980, "rate"] -->
+<!-- data1$reference<-as.numeric(ref) -->
+<!-- # Calculate rate ratios using the reference year -->
+<!-- data1$ratio <- (data1$rate / data1$reference) -->
+<!-- data1$er <-"All" -->
+<!-- data1<-data1[c( "year", "er", "rate", "cases", "py", "reference", "ratio")] -->
+<!-- data1$index<-"DCIS" -->
+<!-- data3<-rbind(data, data1) -->
+<!-- # Create the scatterplot -->
+<!-- d3<-ggplot(data3, aes(x = year, y = ratio, color = index)) + -->
+<!--   geom_point(size = 1.5) + -->
+<!--   geom_line() + -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 2002, y = 1, xend = 2002, yend = 12), colour = "gray") +  -->
+<!--   #annotate("text", x = 2002, y = 12, label = "Ref 2002", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   #geom_segment(aes(x = 1980, y = 1, xend = 1980, yend = 7.5), colour = "gray") +   # Add shortened vertical line at year 1990 -->
+<!--   #geom_vline(xintercept = 1990, color = "gray") +    # Add vertical line at year 1990 -->
+<!--   #annotate("text", x = 1980, y = 8, label = "Ref 1980", color = "black", size = 2) + # Add text annotation -->
+<!--   geom_hline(yintercept = 1, linetype="dashed", color = "red") + -->
+<!--   ylim(0,12)+ -->
+<!--   labs( -->
+<!--     title = "50 - 84 yo",   # Figure title -->
+<!--     x = "year",     # x-axis label -->
+<!--     y = "Incidence relative to 1980")  +   # y-axis label -->
+<!--   theme_classic() +  # Lancet style -->
+<!--   theme( -->
+<!--     plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center title and adjust its properties  -->
+<!--     axis.text.x = element_text(size = 8, angle = 0),  # Adjust x-axis label properties -->
+<!--     axis.text.y = element_text(size = 8), # Adjust y-axis label properties -->
+<!--     axis.title.x = element_text(size = 10),  # Adjust x-axis title properties -->
+<!--     axis.title.y = element_text(size = 10),  # Adjust y-axis title properties -->
+<!--     plot.margin = margin(t = 15, b = 10, l = 15, r = 10),  # Adjust plot margins -->
+<!--     panel.grid.major = element_blank(),  # Remove major grid -->
+<!--     panel.grid.minor = element_blank(),  # Remove minor grid -->
+<!--     panel.background = element_rect(fill = "white"),  # Background color is white -->
+<!--     legend.background = element_rect(fill = "white"), -->
+<!--     legend.position = "bottom", -->
+<!--     legend.text = element_text(size = 5) -->
+<!--   )+ -->
+<!--   scale_color_manual(values = c("IDC" = "black", "DCIS" = "gray"))+ -->
+<!--   labs(color=NULL) -->
+<!-- ``` -->
+<!-- ```{r, message=FALSE, warning=FALSE, echo=F} -->
+<!-- grid.arrange(d1, d2, d3, nrow=1, top = "", bottom = "SEER8") -->
+<!-- ``` -->
+</section>
+<section id="figure-4a-and-b---incidence-rate-ratio-by-er-status" class="level5">
+<h5 class="anchored" data-anchor-id="figure-4a-and-b---incidence-rate-ratio-by-er-status">Figure 4A and B - Incidence rate ratio by ER status</h5>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="breast_idc_dcis_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
