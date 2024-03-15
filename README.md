@@ -59,18 +59,18 @@ Survival files are available in a .zip file: [Survival.zip](https://github.com/f
 ## Simple imputation
 https://filhoalm.github.io/Breast_cancer/Incidence/imputation/imputation.html
 
-# Results
+# **Results**
 
-## DCIS vs IDC (Ismail comment)
-https://filhoalm.github.io/Breast_cancer/SEER8/gitfiles/breast_idc_dcis.html
+## **Ismail's Comment on DCIS vs IDC**
+For detailed results and discussion on DCIS vs IDC as per Ismail's comment, refer to this [github page](https://filhoalm.github.io/Breast_cancer/SEER8/gitfiles/breast_idc_dcis.html).
 
-## Incidence analysis SEER22
-View the Quarto version of the analysis [here](https://filhoalm.github.io/Breast_cancer/Incidence/seer22/Incidence_seer22.html).
+## **Incidence Analysis of SEER22**
+The comprehensive analysis of SEER22 incidence data is available in [Quarto version](https://filhoalm.github.io/Breast_cancer/Incidence/seer22/Incidence_seer22.html).
 
-## Relative Survival analysis
-View the Quarto version of the analysis [here](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/survival.html).
-SEER12: https://filhoalm.github.io/Breast_cancer/Survival_snapshot/seer12_survival.html
+## **Relative Survival Analysis**
+Links to detailed Relative Survival Analyses:
+- [OverView](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/survival.html)
+- [SEER12 Specific](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/seer12_survival.html)
 
-## WerR Live Version
-Access the interactive WerR live version [here](https://filhoalm.github.io/Breast_cancer/test.html).
-
+## **Live Interactive WerR Version**
+Experience the interactive WerR version with live data [here](https://filhoalm.github.io/Breast_cancer/test.html).
