@@ -1,0 +1,41 @@
+[System]
+Output filename=C:\Users\filhoam\Desktop\data\seer_survival\seer12_breast_race_subtype_case_listing.csv
+Matrix filename=Survival Session-1 Matrix-7
+Database name=Incidence - SEER Research Data, 12 Registries, Nov 2022 Sub (1992-2020) - Linked To County Attributes - Time Dependent (1990-2021) Income/Rurality, 1969-2021 Counties
+
+[Session Options]
+Type=Survival
+
+[Export Options]
+GZipped=false
+Variable format=labels
+File format=DOS/Windows
+Field delimiter=comma
+Missing character=space
+Fields with delimiter in quotes=true
+Remove thousands separators=true
+Variable names included=true
+Column Variables as Stats=false
+
+[Variables]
+Var1Name=Age recode with <1 year olds
+Var1DisplayType=Formatted
+Var2Name=Year of diagnosis
+Var2DisplayType=Formatted
+Var3Name=Race and origin recode (NHW, NHB, NHAIAN, NHAPI, Hispanic)
+Var3DisplayType=Formatted
+Var4Name=Summary stage 2000 (1998-2017)
+Var4DisplayType=Formatted
+Var5Name=Breast Subtype (2010+)
+Var5DisplayType=Formatted
+Var6Name=Sex
+Var6DisplayType=Formatted
+Var7Name=Vital status recode (study cutoff used)
+Var7DisplayType=Formatted
+Var8Name=Year of follow-up recode
+Var8DisplayType=Formatted
+Var9Name=End Calc Vital Status (Adjusted)
+Var9DisplayType=Formatted
+Var10Name=Number of Intervals (Calculated)
+Var10DisplayType=Unformatted
+
