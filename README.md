@@ -48,7 +48,7 @@ The comprehensive analysis of SEER22 incidence data is available in [Quarto vers
 ## **Simple Imputation**
 You can find the conducted [Simple imputation here](https://filhoalm.github.io/Breast_cancer/Incidence/imputation/imputation.html)
 
-## **Survival Analysis: Kaplan-Meier, Cox Model, and Hazard Function
+## **Survival Analysis: Kaplan-Meier, Cox Model, and Hazard Function**
 - [Overview](https://filhoalm.github.io/Breast_cancer/Survival_snapshot/breast_seer12.html)
 
 ## **Relative Survival Analysis**
