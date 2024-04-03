@@ -1,0 +1,1316 @@
+
+---
+toc: true
+title: "Malignant breast cancer survival in the United States: seer17 (Specialized dataset)"
+author: "AMF"
+format: html
+editor: visual
+date: "January 24, 2024"
+date-modified: last-modified
+---
+
+
+
+
+## Introduction
+
+
+
+## Methods
+*Data source* 
+
+Data was obtained from the Surveillance, Epidemiology, and End Results (SEER) Program's Seventeen Database (Specialized dataset), accessed through SEER*Stat version 8.4.0. The dataset comprises malignant breast cancer cases in females aged 35 to 84 years, spanning from 1992 to 2020 with follow-up until December 2020. Age at diagnosis was categorized into 5-year age groups (35 - 39, ..., 80-84) and one-year time spans. Census tract-level socioeconomic status (SES) is available in quintiles. Race and ethnicity definitions follow the criteria established by the SEER program, employing an algorithm to recode detailed race and origin variables into four groups: Non-Hispanic White (NHW), Non-Hispanic Black (NHB), Hispanic (HIS), and Asian and Pacific Islander (API). We also conducted analyses using census tract-level rurality variables to facilitate assessments of urban/rural differences and persistent poverty. For more information about the definitions and methodology used to create these specialized variables, refer to [SEER Census Tract-Level Variables](https://seer.cancer.gov/data/specialized/available-databases/census-tract-request/)."
+
+
+*Statistical analysis* :
+
+The study assessed the proportions of ER status, breast cancer subtype, cancer staging, SES status, and persistent poverty within each race and ethnicity group. Mortality rates were calculated per 1000 person-years. Kaplan-Meier survival curves were generated, and differences between the curves were evaluated using the Log-Rank p-value. To quantify the Hazard ratios between the variables, a Cox proportional hazards model was applied. All statistical analyses were conducted using the R software platform.
+
+
+
+
+
+
+## Results
+
+### Unspecified ER
+
+#### Figure 1A
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(kableExtra)
+library(survminer)
+library(haven)
+library(dplyr)
+library(survival)
+library(gridExtra)
+
+# Read the dataset from the provided URL
+#url <- "https://raw.githubusercontent.com/filhoalm/Breast_cancer/main/Incidence/see12/seer12_er.csv"
+#df <- read_csv(url)
+#head(df)
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast_er.csv")
+names(df)<-c("age", "year", "er", "rate", "cases", "py")
+df$er[df$er==3]<-2 
+
+# Aggregate cases by age, year, and er
+df_a <- df %>%
+  group_by(age, year, er) %>%
+  summarise(total_cases = sum(cases), .groups = 'drop')
+
+# Recode the race and stage values
+df_a$er <- factor(df_a$er, levels = c(0, 1, 2),
+                  labels = c("Positive", "Negative", "Unknown"))
+
+# Filter out rows with "Year of diagnosis" in the 'year' column and convert to numeric
+#df <- subset(df, df$year != "Year of diagnosis")
+df_a$year <- as.numeric(df_a$year) + 1991
+df1<-df_a
+df2<-subset(df1, df1$age >=8 & df1$age<= 17)
+
+# Sum the number of ER cases by year and age
+df_summary <- df2 %>%
+  group_by(year, age) %>%
+  summarise(total_cases = sum(total_cases), .groups = 'drop') # Sum of 'cases' within each 'year' and 'age' group
+df3<-merge(df_summary, df2, by=c("age", "year"))
+# Sum the number of ER cases by year and age
+df_s <- df2 %>%
+  group_by(year, er) %>%
+  summarise(total_cases = sum(total_cases), .groups = 'drop') # Sum of 'cases' within each 'year' and 'age' group
+# Sum the number of ER cases by year and age
+df_s1 <- df2 %>%
+  group_by(year) %>%
+  summarise(total_cases = sum(total_cases), .groups = 'drop') # Sum of 'cases' within each 'year' and 'age' group
+
+
+df4<-merge(df_s, df_s1, by=c("year"))
+# Proportion of unknown
+df4$prop<-(df4$total_cases.x / df4$total_cases.y)
+
+# Filter for 'Unknown' ER only
+df_unknown_er <- df4 %>%
+  filter(er == "Unknown")
+
+df_unknown_er<-subset(df_unknown_er, df_unknown_er$year>=1992)
+
+# Create a line plot in Lance style
+a<-ggplot(df_unknown_er, aes(x = year, y = prop, group = 1)) +
+  geom_line(color = "black", size = 1) +  # Change line color and size as needed
+  ylim(0,0.5)+
+  geom_point(color = "black", size = 2) + # Add points and customize their color and size as needed
+  theme_minimal() + # Lance style typically implies a minimalistic theme
+  labs(
+    title = "Year at diagnosis",
+    x = "Year",
+    y = "% of Unknown ER"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5), # Center the plot title
+    text = element_text(size = 12) # Change text size as needed
+  )
+
+## Proportion Age at diagnosis
+df2a<-subset(df2, df2$year>=1992) #1991 represents 1992-2020
+
+# Sum the number of ER cases by year and age
+dfb <- df2a %>%
+  group_by(age) %>%
+  summarise(total_cases = sum(total_cases), .groups = 'drop') # Sum of 'cases' within each 'year' and 'age' group
+# Sum the number of ER cases by year and age
+dfc <- df2a %>%
+  group_by(age, er) %>%
+  summarise(total_cases = sum(total_cases), .groups = 'drop') # Sum of 'cases' within each 'year' and 'age' group
+df4a<-merge(dfc, dfb, by=c("age"))
+
+# Proportion of unknown
+df4a$prop<-(df4a$total_cases.x / df4a$total_cases.y)
+
+# Filter for 'Unknown' ER only
+df_age <- df4a %>%
+  filter(er == "Negative")
+
+df_age$age_label [df_age$age == 8]<-"30-34"
+df_age$age_label [df_age$age == 9]<-"35-39"
+df_age$age_label [df_age$age == 10]<-"40-44"
+df_age$age_label [df_age$age == 11]<-"45-49"
+df_age$age_label [df_age$age == 12]<-"50-54"
+df_age$age_label [df_age$age == 13]<-"55-54"
+df_age$age_label [df_age$age == 14]<-"60-64"
+df_age$age_label [df_age$age == 15]<-"70-74"
+df_age$age_label [df_age$age == 16]<-"75-79"
+df_age$age_label [df_age$age == 17]<-"80-84"
+
+# Create a line plot in Lance style
+b <- ggplot(df_age, aes(x = factor(age), y = prop, group = 1)) +
+  geom_line(color = "black", size = 1) +
+  ylim(0, 0.5) +
+  geom_point(color = "black", size = 2) +
+  theme_minimal() +
+  labs(
+    title = "Age at diagnosis",
+    x = "Age",
+    y = "% ER Negative"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    text = element_text(size = 12)
+  ) +
+  scale_x_discrete(labels = c("30-34", "", "40-44", "", "50-54", "", "60-64", "", "75-79", ""))
+
+
+grid.arrange(a,b,
+             ncol=2,
+             top = grid::textGrob('', gp=grid::gpar(fontsize=5)))
+
+
+```
+Figure 1A presents the annual proportions of breast cancer cases with unknown ER status. Figure B details the yearly proportions of breast cancers with ER-negative status."
+
+#### Figure 1B
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# Read the dataset from the provided URL
+#url <- "https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/seer22_race_er.csv"
+#df <- read_csv(url)
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast_race_er.csv")
+
+names(df)<-c("age","year", "race", "er", "rate", "cases", "py")
+df$year <- as.numeric(df$year) + 1999
+# Check the result
+df<-subset(df, df$year > 2000)
+# Recode the race and stage values
+df$race <- factor(df$race, levels = c(0, 1, 2, 3, 4, 5),
+                  labels = c("NHW", "NHB", "AIAN", "API", "HIS", "Unknown"))
+df$er[df$er==3]<-2
+df$er <- factor(df$er, levels = c(0, 1, 2),
+                labels = c("Positive", "Negative", "Unknown"))
+
+# Now, aggregate both cases and py by the new age groups as well as by race and subtype
+data <- aggregate(cbind(cases, py) ~ race + year + er, data=df, sum)
+# estimate the total number of er cases by year and race
+estimated_cases <- aggregate(data$cases, by = list(data$race, data$year), sum)
+names(estimated_cases)<-c("race", "year", "total")
+df1<-merge(data, estimated_cases, by=c("race", "year"))
+df1$prop<-(df1$cases / df1$total)
+
+#Create a line plot in Lance style
+
+df2<-subset(df1, df1$er == "Unknown")
+df3<-subset(df2, df2$race== "NHW"|df2$race=="NHB"|df2$race=="API"|df2$race=="HIS")
+
+a1<-ggplot(df3, aes(x = year, y = prop, group = race, color = race)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  ylim(0, 0.5) +
+  scale_color_manual(values = c("NHW" = "darkblue", "NHB" = "darkred", "API" = "purple", "HIS" = "darkorange")) +
+  labs(
+    title = "ER",
+    x = "Year",
+    y = "% of Unknown ER"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    text = element_text(size = 12),
+    aspect.ratio = 2.5,
+    legend.position = "bottom",
+    legend.text = element_text(size = 5), # This will reduce the legend text size
+    legend.title = element_text(size = 6), # This will reduce the legend title size
+    legend.key.size = unit(0.5, "cm") # This will reduce the size of the colored keys
+  )
+
+
+# Read the dataset from the provided URL
+#url <- "https://raw.githubusercontent.com/filhoalm/ITEB-breast-cancer/main/survival_article/data/seer22_race_subtype.csv"
+#df <- read_csv(url)
+
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast_race_subtype.csv")
+
+names(df)<-c("age", "year", "race", "subtype", "rate", "cases", "py")
+df$year <- as.numeric(df$year) + 1999
+
+# Check the result
+df<-subset(df, df$year > 2000)
+# Recode the race and stage values
+df$race <- factor(df$race, levels = c(0, 1, 2, 3, 4, 5),
+                  labels = c("NHW", "NHB", "AIAN", "API", "HIS", "Unknown"))
+#
+df$subtype[df$subtype==5]<-4
+df$subtype <- factor(df$subtype, levels = c(0, 1, 2, 3, 4),
+                     labels = c("HR+/HER2+", "HR-/HER2+", "HR+/HER2-", "HR-/HER2-", "Unknown"))
+
+# Now, aggregate both cases and py by the new age groups as well as by race and subtype
+data <- aggregate(cbind(cases, py) ~ race + year + subtype, data=df, sum)
+# estimate the total number of er cases by year and race
+estimated_cases <- aggregate(data$cases, by = list(data$race, data$year), sum)
+names(estimated_cases)<-c("race", "year", "total")
+df1<-merge(data, estimated_cases, by=c("race", "year"))
+df1$prop<-(df1$cases / df1$total)
+
+#Create a line plot in Lance style
+
+df2<-subset(df1, df1$year >=2000 & df1$subtype == "Unknown")
+df3<-subset(df2, df2$race== "NHW"|df2$race=="NHB"|df2$race=="API"|df2$race=="HIS")
+
+b1<-ggplot(df3, aes(x = year, y = prop, group = race, color = race)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  ylim(0, 0.5) +
+  scale_color_manual(values = c("NHW" = "darkblue", "NHB" = "darkred", "API" = "purple", "HIS" = "darkorange")) +
+  labs(
+    title = "Subtype",
+    x = "Year",
+    y = "% of Unknown Subtype"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    text = element_text(size = 12),
+    aspect.ratio = 2.5,
+    legend.position = "bottom",
+    legend.text = element_text(size = 5), # This will reduce the legend text size
+    legend.title = element_text(size = 6), # This will reduce the legend title size
+    legend.key.size = unit(0.5, "cm") # This will reduce the size of the colored keys
+  )
+
+###
+grid.arrange(a1,b1,
+             ncol=2,
+             top = grid::textGrob('', gp=grid::gpar(fontsize=5)))
+
+
+
+```
+Figure 1B presents the annual proportions of breast cancer cases with unknown ER status by race and ethnicity
+
+
+### Characteristic of the breast cancer patients cohort
+
+
+Table 1 presents the characteristics of breast cancer cases and proportions by race and ethnicity. We observed heterogeneity among race and ethnicity groups in the proportions of ER status, cancer stage, subtype, SES, and poverty. The highest proportion of ER-negative status was found among Non-Hispanic Blacks (NHB, 28.10%) compared to Hispanics (18.82%), Non-Hispanic Whites (NHW, 14.66%), and Asians/Pacific Islanders (API). NHB and Hispanics presented highest proportion of regional(NHB 34.74%, Hispanics 34.75%) and distant stages (NHB 8.38%, Hispanics 5.63%) compared to NHW (regional 27.80%, distant 5.34%) and API. The difference in cancer subtypes is notably apparent in the HR-/HER- subtype, with NHB showing the highest percentage (14.79%) among the racial groups analyzed. SES status in NHB (34.64%) and Hispanics (20.31%) constituting a significantly larger proportion of Group 1, the lowest SES category, in contrast to NHW (9.57%) and API. When examining the impact of living in persistent poverty census tracts, NHB (21.28%) and Hispanics (12.45%) are disproportionately affected compared to NHW (4.26%) and API.
+
+
+
+<!-- In summary, these highlighted results underscore significant racial and ethnic disparities in cancer diagnosis and socioeconomic challenges. The disproportionately higher rates of ER-negative status, regional and distant stage cancers, and HR-/HER- subtypes among NHB, along with the pronounced socioeconomic disadvantages faced by NHB and Hispanic populations, call for urgent and tailored public health interventions to mitigate these disparities and improve cancer care outcomes for these communities. -->
+
+
+
+
+
+
+Table 1. Characteristics of the breast cancer cases and proportion by race and ethnicity, 2006 - 2020
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(dplyr)
+library(tidyr)
+library(scales)  # For using percent() function
+library(dplyr)
+library(tidyr)
+library(scales)  # For using percent() function
+library(dplyr)
+library(tidyr)
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age", "year", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+
+
+#######
+
+# Assuming you've already prepared 'df' and 'race_lab' is in use
+# First, ensure we exclude 'In situ' stage from our calculations
+df_filtered <- df1 %>%
+  filter(stage != "In situ")
+
+# Calculate the counts and proportions for race_lab within each stage
+race_distribution_within_stage <- df_filtered %>%
+  count(stage, race_lab) %>%
+  group_by(stage) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup()
+
+# Adding a 'Total Stage' summary row for each race_lab
+total_stage_summary <- race_distribution_within_stage %>%
+  group_by(race_lab) %>%
+  summarise(stage = "Total Stage",
+            n = sum(n),
+            Total = sum(Total),
+            Proportion = n / Total) %>%
+  ungroup()
+
+# Combine the detailed distribution and total summaries
+race_distribution_combined <- bind_rows(race_distribution_within_stage, total_stage_summary) %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(stage, race_lab, n, Percentage)
+
+# Specify stages in the desired order, ensuring 'Total Stage' is included
+stage_order <- c("Localized", "Regional", "Distant", "Unknown/unstaged", "Total Stage")
+
+# Specify race_lab categories in the desired order
+race_lab_order <- c("NHW", "NHB", "HIS", "API")
+
+# Ordering stages and filtering out any stages not included in 'stage_order'
+race_distribution_combined <- race_distribution_combined %>%
+  filter(stage %in% stage_order) %>%
+  mutate(stage = factor(stage, levels = stage_order),
+         race_lab = factor(race_lab, levels = race_lab_order)) %>%
+  arrange(stage)
+
+# Pivot wider to format for the desired column order
+wide_format_race_within_stage_with_totals <- race_distribution_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}")
+
+# Manually specify the column order based on your requirement
+column_order <- c("stage",
+                  "NHW_n", "NHW_Percentage",
+                  "NHB_n", "NHB_Percentage",
+                  "HIS_n", "HIS_Percentage",
+                  "API_n", "API_Percentage")
+
+# Ensure the wide format table only contains the columns in 'column_order', which matches your requested order
+wide_stage <- wide_format_race_within_stage_with_totals %>%
+  select(all_of(column_order))
+
+# View the final table
+
+
+
+
+#### SES groups
+
+# Assuming 'df' is your dataframe and 'race_lab' captures the race variable
+# Defining SES groups order
+ses_order <- c("Group 1 (lowest SES)", "Group 2", "Group 3", "Group 4", "Group 5 (highest SES)", "Blank(s)")
+
+# Calculate counts and proportions for each race within SES groups
+race_ses_distribution <- df1 %>%
+  filter(!ylost %in% c("Blank(s)")) %>% # Optional: Exclude "Blank(s)" if it's not needed
+  count(race_lab, ylost) %>%
+  group_by(race_lab) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup() %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(race_lab, ylost, n, Percentage)
+
+# Adding a 'Total' summary row for each race across all SES groups
+total_summary_race <- race_ses_distribution %>%
+  group_by(race_lab) %>%
+  summarise(ylost = "Total",
+            n = sum(n),
+            Percentage = "100%") %>% # In 'Total', all entries per race are considered, hence 100%
+  ungroup()
+
+# Combine the detailed distribution and 'Total' summaries
+race_ses_combined <- bind_rows(race_ses_distribution, total_summary_race) %>%
+  arrange(race_lab, ylost)
+
+# Pivot wider for the final summary, focusing on race and SES categories
+wide_ses <- race_ses_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}") %>%
+  arrange(match(ylost, ses_order)) # Order rows based on SES groups
+
+# Set the column order for races, if required
+# Column order can adhere to a specific race order if provided. Otherwise, adjust manually as needed.
+
+# Print the final summary table
+
+
+
+#### Stage
+
+
+df_filtered <- df1 %>%
+  filter(stage != "In situ")
+
+# Assuming 'df' is your data frame and 'race_lab' captures the race variable
+# Defining Stage order
+stage_order <- c("Localized", "Regional", "Distant", "Unknown/unstaged")
+
+# Calculate counts and proportions for each race within stage categories
+race_stage_distribution <- df_filtered %>%
+  filter(!stage %in% c("Blank(s)")) %>% # Optional: Exclude "Blank(s)" if it's not needed
+  count(race_lab, stage) %>%
+  group_by(race_lab) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup() %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(race_lab, stage, n, Percentage)
+
+# Adding a 'Total' summary row for each race across all stage categories
+total_summary_race <- race_stage_distribution %>%
+  group_by(race_lab) %>%
+  summarise(stage = "Total",
+            n = sum(n),
+            Percentage = "100%") %>% # In 'Total', all entries per race are considered, hence 100%
+  ungroup()
+
+# Combine the detailed distribution and 'Total' summaries
+race_stage_combined <- bind_rows(race_stage_distribution, total_summary_race) %>%
+  arrange(race_lab, stage)
+
+# Pivot wider for the final summary, focusing on race and stage categories
+wide_stage <- race_stage_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}") %>%
+  arrange(match(stage, stage_order)) # Order rows based on stage categories
+
+# Print the final summary table
+
+
+#### Subtype
+
+
+df_filtered <- df1 %>%
+  filter(subtype != "In situ")
+
+# Assuming 'df' is your data frame and 'race_lab' captures the race variable
+# Defining subtype order
+subtype_order <- c("HR+/HER2-","HR-/HER2-","not available", "HR-/HER2+", "Unknown", "HR+/HER2+")
+
+# Calculate counts and proportions for each race within subtype categories
+race_subtype_distribution <- df_filtered %>%
+  filter(!subtype %in% c("Blank(s)")) %>% # Optional: Exclude "Blank(s)" if it's not needed
+  count(race_lab, subtype) %>%
+  group_by(race_lab) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup() %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(race_lab, subtype, n, Percentage)
+
+# Adding a 'Total' summary row for each race across all subtype categories
+total_summary_race <- race_subtype_distribution %>%
+  group_by(race_lab) %>%
+  summarise(subtype = "Total",
+            n = sum(n),
+            Percentage = "100%") %>% # In 'Total', all entries per race are considered, hence 100%
+  ungroup()
+
+# Combine the detailed distribution and 'Total' summaries
+race_subtype_combined <- bind_rows(race_subtype_distribution, total_summary_race) %>%
+  arrange(race_lab, subtype)
+
+# Pivot wider for the final summary, focusing on race and subtype categories
+wide_subtype <- race_subtype_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}") %>%
+  arrange(match(subtype, subtype_order)) # Order rows based on subtype categories
+
+# Print the final summary table
+
+
+##### Poverty
+
+
+df_filtered <- df1 %>%
+  filter(poverty != "In situ")
+
+# Assuming 'df' is your data frame and 'race_lab' captures the race variable
+# Defining poverty order
+poverty_order <- c("Not persistent poverty census tract", "Persistent poverty census tract", "Blank(s)" )
+
+# Calculate counts and proportions for each race within poverty categories
+race_poverty_distribution <- df_filtered %>%
+  filter(!poverty %in% c("Blank(s)")) %>% # Optional: Exclude "Blank(s)" if it's not needed
+  count(race_lab, poverty) %>%
+  group_by(race_lab) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup() %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(race_lab, poverty, n, Percentage)
+
+# Adding a 'Total' summary row for each race across all poverty categories
+total_summary_race <- race_poverty_distribution %>%
+  group_by(race_lab) %>%
+  summarise(poverty = "Total",
+            n = sum(n),
+            Percentage = "100%") %>% # In 'Total', all entries per race are considered, hence 100%
+  ungroup()
+
+# Combine the detailed distribution and 'Total' summaries
+race_poverty_combined <- bind_rows(race_poverty_distribution, total_summary_race) %>%
+  arrange(race_lab, poverty)
+
+# Pivot wider for the final summary, focusing on race and poverty categories
+wide_poverty <- race_poverty_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}") %>%
+  arrange(match(poverty, poverty_order)) # Order rows based on poverty categories
+
+# Print the final summary table
+
+### ER
+
+
+
+df_filtereerdf_filtered <- df1 %>%
+  filter(er != "In situ")
+
+# Assuming 'df' is your data frame and 'race_lab' captures the race variable
+# Defining er order
+er_order <- c("Positive", "Negative", "Recode not available", "Borderline/Unknown")
+
+# Calculate counts and proportions for each race within er categories
+race_er_distribution <- df_filtered %>%
+  filter(!er %in% c("Blank(s)")) %>% # Optional: Exclude "Blank(s)" if it's not needed
+  count(race_lab, er) %>%
+  group_by(race_lab) %>%
+  mutate(Total = sum(n),
+         Proportion = n / Total) %>%
+  ungroup() %>%
+  mutate(Percentage = percent(Proportion)) %>%
+  select(race_lab, er, n, Percentage)
+
+# Adding a 'Total' summary row for each race across all er categories
+total_summary_race <- race_er_distribution %>%
+  group_by(race_lab) %>%
+  summarise(er = "Total",
+            n = sum(n),
+            Percentage = "100%") %>% # In 'Total', all entries per race are considered, hence 100%
+  ungroup()
+
+# Combine the detailed distribution and 'Total' summaries
+race_er_combined <- bind_rows(race_er_distribution, total_summary_race) %>%
+  arrange(race_lab, er)
+
+# Pivot wider for the final summary, focusing on race and er categories
+wide_er <- race_er_combined %>%
+  pivot_wider(names_from = race_lab, values_from = c(n, Percentage), names_glue = "{race_lab}_{.value}") %>%
+  arrange(match(er, er_order)) # Order rows based on er categories
+
+# Print the final summary table
+
+
+
+
+##
+
+names(wide_stage)[1]<-c("var")
+
+
+names(wide_er)[1]<-c("var")
+
+
+names(wide_subtype)[1]<-c("var")
+
+
+names(wide_ses)[1]<-c("var")
+
+
+names(wide_poverty)[1]<-c("var")
+
+
+
+
+# Add the dplyr package for using slice function
+library(dplyr)
+
+# Create a data frame
+
+
+# Define new row values
+new_stage <- data.frame(var = "Stage", API_n = 0 ,API_Percentage = "==========", HIS_n = 0 , 
+                      HIS_Percentage = "==========", NHB_n = 0 ,  NHB_Percentage = "==========", 
+                      NHW_n = 0 , NHW_Percentage = "==========")
+new_er <- data.frame(var = "ER status", API_n = 0 ,API_Percentage = "==========", HIS_n = 0 , 
+                        HIS_Percentage = "==========", NHB_n = 0 ,  NHB_Percentage = "==========", 
+                        NHW_n = 0 , NHW_Percentage = "==========")
+new_subtype <- data.frame(var = "Subtype", API_n = 0 ,API_Percentage = "==========", HIS_n = 0 , 
+                        HIS_Percentage = "==========", NHB_n = 0 ,  NHB_Percentage = "==========", 
+                        NHW_n = 0 , NHW_Percentage = "==========")
+new_ses <- data.frame(var = "SES status", API_n = 0 ,API_Percentage = "==========", HIS_n = 0 , 
+                        HIS_Percentage = "==========", NHB_n = 0 ,  NHB_Percentage = "==========", 
+                        NHW_n = 0 , NHW_Percentage = "==========")
+new_poverty <- data.frame(var = "Poverty", API_n = 0 ,API_Percentage = "==========", HIS_n = 0 , 
+                        HIS_Percentage = "==========", NHB_n = 0 ,  NHB_Percentage = "==========", 
+                        NHW_n = 0 , NHW_Percentage = "==========")
+
+# Specify the position (row number) where you want to add the new row
+position <- 0
+# Add the new row at the specified position
+df3 <- bind_rows(slice(wide_stage, 0:(position - 0)), new_stage, slice(wide_stage, position:nrow(wide_stage)))
+
+df4 <- bind_rows(slice(wide_er, 0:(position - 0)), new_er, slice(wide_er, position:nrow(wide_er)))
+
+df5 <- bind_rows(slice(wide_subtype, 0:(position - 0)), new_subtype, slice(wide_subtype, position:nrow(wide_subtype)))
+
+df6 <- bind_rows(slice(wide_ses, 0:(position - 0)), new_ses, slice(wide_ses, position:nrow(wide_ses)))
+
+df7 <- bind_rows(slice(wide_poverty, 0:(position - 0)), new_poverty, slice(wide_poverty, position:nrow(wide_poverty)))
+
+
+df2<-rbind(df3,df4,df5,df6,df7)
+
+df2<-df2[c(1,2,6, 3,7, 4, 8, 5,9)]
+
+
+#kbl(df2) %>%
+ # kable_styling(bootstrap_options = "striped", font_size = 1)
+
+knitr::kable(df2, col.names = gsub("[.]", " ", names(df2)))
+
+```
+
+### Mortality rates per 1000 PY
+
+#### Figure 2A
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age1", "year_follow_up", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+df1$age[df1$age1 == "35-39 years"]<-37.5
+df1$age[df1$age1 == "40-44 years"]<-42.5
+df1$age[df1$age1 == "45-49 years"]<-47.5
+df1$age[df1$age1 == "50-54 years"]<-52.5
+df1$age[df1$age1 == "55-59 years"]<-57.5
+df1$age[df1$age1 == "60-64 years"]<-62.5
+df1$age[df1$age1 == "65-69 years"]<-67.5
+df1$age[df1$age1 == "70-74 years"]<-72.5
+df1$age[df1$age1 == "75-79 years"]<-77.5
+df1$age[df1$age1 == "80-84 years"]<-82.5
+
+df1$status_lab[df1$status == "Alive"]<-1
+df1$status_lab[df1$status == "Dead"]<-2
+
+#df2<-df1[c(2,20,19,21,17,4,6)]
+df2<-df1[c("year_follow_up", "age","race_lab" ,"status_lab","time", "stage" ,"er")]
+
+df2$er<-as.factor(df2$er)
+
+
+# ER status
+
+# Calculate death counts and person years for each ER status and year of diagnosis
+df_mortality_er <- df2 %>%
+  group_by(er, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per ER status
+df_mortality_er <- df_mortality_er %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+# Subset data for years >= 2000
+df_mortality_er <- subset(df_mortality_er, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# # Create labels for ER status
+# df_mortality_er$er_lab[df_mortality_er$er == 1] <- "Negative"
+# df_mortality_er$er_lab[df_mortality_er$er == 2] <- "Positive"
+
+
+df_mortality_er<-subset(df_mortality_er, df_mortality_er$er == "Negative" | df_mortality_er$er == "Positive")
+
+# Create a ggplot with mortality rates over years, color by ER status
+plot_a<-ggplot(df_mortality_er, aes(x = year_follow_up, y = mortality_rate_per_100k, color = er)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "ER status",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "ER status") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  scale_color_manual(values = c("#2675b1", "#ca6924")) +
+  labs(color = NULL)
+
+#
+
+# Stage
+
+# Calculate death counts and person years for each stage and year of diagnosis
+df_mortality_stage <- df2 %>%
+  group_by(stage, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per stage
+df_mortality_stage <- df_mortality_stage %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+# Subset data for years >= 2000
+df_mortality_stage <- subset(df_mortality_stage, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# Create labels for stage
+#df_mortality_stage$stage_lab[df_mortality_stage$stage == 1] <- "Localized"
+#df_mortality_stage$stage_lab[df_mortality_stage$stage == 2] <- "Regional"
+#df_mortality_stage$stage_lab[df_mortality_stage$stage == 3] <- "Distant"
+
+
+df_mortality_stage<-subset(df_mortality_stage, df_mortality_stage$stage == "Localized" |
+                             df_mortality_stage$stage == "Regional" | df_mortality_stage$stage == "Distant")
+
+# Create a ggplot with mortality rates over years, color by stage
+plot_b <- ggplot(df_mortality_stage, aes(x = year_follow_up, y = mortality_rate_per_100k, color = stage)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "Staging at diagnosis",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "Stage") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  scale_color_manual(values = c("darkred", "darkblue", "darkgreen")) +
+  labs(color = NULL)
+
+# Race and Ethnicity
+
+# Calculate death counts and person years for each race and year of diagnosis
+df_mortality_race <- df2 %>%
+  group_by(race_lab, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per race
+df_mortality_race <- df_mortality_race %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+
+# Subset data for years >= 2000
+df_mortality_race <- subset(df_mortality_race, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# Create a ggplot with mortality rates over years, color by race
+plot_c <- ggplot(df_mortality_race, aes(x = year_follow_up, y = mortality_rate_per_100k, color = race_lab)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "Race and Ethnicity",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "Race") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  scale_color_manual(values = c("red", "blue", "darkgreen", "purple")) +
+  labs(color = NULL)
+
+
+
+
+# Arrange the plots in a grid
+grid.arrange(plot_a, plot_b, plot_c, widths = c(3, 3, 3), ncol = 3)
+
+
+
+
+```
+
+
+#### Figure 2B
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age1", "year_follow_up", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+df1$age[df1$age1 == "35-39 years"]<-37.5
+df1$age[df1$age1 == "40-44 years"]<-42.5
+df1$age[df1$age1 == "45-49 years"]<-47.5
+df1$age[df1$age1 == "50-54 years"]<-52.5
+df1$age[df1$age1 == "55-59 years"]<-57.5
+df1$age[df1$age1 == "60-64 years"]<-62.5
+df1$age[df1$age1 == "65-69 years"]<-67.5
+df1$age[df1$age1 == "70-74 years"]<-72.5
+df1$age[df1$age1 == "75-79 years"]<-77.5
+df1$age[df1$age1 == "80-84 years"]<-82.5
+
+df1$status_lab[df1$status == "Alive"]<-1
+df1$status_lab[df1$status == "Dead"]<-2
+
+df2<-df1[c("year_follow_up", "age","race_lab" ,"status_lab","time", "stage" ,"er", "subtype", "poverty", "ylost")]
+
+
+# Subtype
+
+# Calculate death counts and person years for each race and year of diagnosis
+df_mortality_subtype <- df2 %>%
+  group_by(subtype, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per race
+df_mortality_subtype <- df_mortality_subtype %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+
+# Subset data for years >= 2000
+df_mortality_subtype <- subset(df_mortality_subtype, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# Create a ggplot with mortality rates over years, color by race
+plot_d <- ggplot(df_mortality_subtype, aes(x = year_follow_up, y = mortality_rate_per_100k, color = subtype)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "Subtype",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "Subtype") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  #scale_color_manual(values = c("red", "blue", "darkgreen", "purple")) +
+  labs(color = NULL)
+
+
+
+
+# ylost
+
+# Calculate death counts and person years for each race and year of diagnosis
+df_mortality_ylost <- df2 %>%
+  group_by(ylost, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per race
+df_mortality_ylost <- df_mortality_ylost %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+
+# Subset data for years >= 2000
+df_mortality_ylost <- subset(df_mortality_ylost, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# Create a ggplot with mortality rates over years, color by race
+plot_e <- ggplot(df_mortality_ylost, aes(x = year_follow_up, y = mortality_rate_per_100k, color = ylost)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "SES status",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "ylost") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  #scale_color_manual(values = c("red", "blue", "darkgreen", "purple")) +
+  labs(color = NULL)
+
+
+# poverty
+
+# Calculate death counts and person years for each race and year of diagnosis
+df_mortality_poverty <- df2 %>%
+  group_by(poverty, year_follow_up) %>%
+  summarise(death_count = sum(status_lab == 2),
+            person_years = sum(time / 12))
+
+# Calculate mortality rate per 100,000 per race
+df_mortality_poverty <- df_mortality_poverty %>%
+  mutate(mortality_rate_per_100k = (death_count / person_years) * 1000)
+
+
+# Subset data for years >= 2000
+df_mortality_poverty <- subset(df_mortality_poverty, year_follow_up >= 2003 & year_follow_up <= 2020 )
+
+# Create a ggplot with mortality rates over years, color by race
+plot_f <- ggplot(df_mortality_poverty, aes(x = year_follow_up, y = mortality_rate_per_100k, color = poverty)) +
+  geom_line(size = 0.9) +
+  xlim(2000, 2020)+
+  labs(title = "Poverty",
+       x = "Year of Follow-up",
+       y = "Mortality Rate per 1000 PYs",
+       color = "poverty") +
+  theme(text = element_text(size = 12),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.text = element_text(size = 5)) +
+  #scale_color_manual(values = c("red", "blue", "darkgreen", "purple")) +
+  labs(color = NULL)
+
+
+
+
+# Arrange the plots in a grid
+grid.arrange(plot_d, plot_e, plot_f, widths = c(3, 3, 3), ncol = 3)
+
+
+
+```
+
+###  Kaplan-Meier survival curves
+
+#### Figure 3A
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age1", "year_follow_up", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+df1$age[df1$age1 == "35-39 years"]<-37.5
+df1$age[df1$age1 == "40-44 years"]<-42.5
+df1$age[df1$age1 == "45-49 years"]<-47.5
+df1$age[df1$age1 == "50-54 years"]<-52.5
+df1$age[df1$age1 == "55-59 years"]<-57.5
+df1$age[df1$age1 == "60-64 years"]<-62.5
+df1$age[df1$age1 == "65-69 years"]<-67.5
+df1$age[df1$age1 == "70-74 years"]<-72.5
+df1$age[df1$age1 == "75-79 years"]<-77.5
+df1$age[df1$age1 == "80-84 years"]<-82.5
+
+df1$status_lab[df1$status == "Alive"]<-1
+df1$status_lab[df1$status == "Dead"]<-2
+
+df4<-df1[c("year_follow_up", "age","race_lab" ,"status_lab","time", "stage" ,"er", "subtype", "poverty", "ylost")]
+
+names(df4)[3:4]<-c("race", "status")
+
+
+# ER status
+
+
+df4a<-subset(df4, df4$er == "Positive" | df4$er == "Negative" )
+
+df5 <- subset(df4a, year_follow_up >= 2003 & year_follow_up <= 2020 & df4a$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ er, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa1<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 5),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  #palette = c("#2675b1", "#ca6924"),  # Here you specify your custom colors
+  title = "ER status",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+
+# Stage
+
+df4a<-subset(df4, df4$stage == "Localized" | df4$stage == "Regional" | df4$stage == "Distant" )
+
+df5 <- subset(df4a, year_follow_up >= 2003 & year_follow_up <= 2020 & df4a$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ stage, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa2<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 5),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  palette = c("darkred", "darkblue", "darkgreen"),  # Here you specify your custom colors
+  title = "Staging at diagnosis",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+# Race and Ethnicity
+df4a<-subset(df4, df4$stage == "Localized" | df4$stage == "Regional" | df4$stage == "Distant" )
+
+df5 <- subset(df4, year_follow_up >= 2003 & year_follow_up <= 2020 & df4$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ race, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa3<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  size = 0.1, # added this line to reduce line size
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 5),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  palette = c("red", "blue", "darkgreen", "purple"),  # Here you specify your custom colors
+  title = "Race",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+grid.arrange(aa1$plot, aa2$plot, aa3$plot, ncol = 3)
+
+```
+
+
+#### Figure 3B
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age1", "year_follow_up", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+df1$age[df1$age1 == "35-39 years"]<-37.5
+df1$age[df1$age1 == "40-44 years"]<-42.5
+df1$age[df1$age1 == "45-49 years"]<-47.5
+df1$age[df1$age1 == "50-54 years"]<-52.5
+df1$age[df1$age1 == "55-59 years"]<-57.5
+df1$age[df1$age1 == "60-64 years"]<-62.5
+df1$age[df1$age1 == "65-69 years"]<-67.5
+df1$age[df1$age1 == "70-74 years"]<-72.5
+df1$age[df1$age1 == "75-79 years"]<-77.5
+df1$age[df1$age1 == "80-84 years"]<-82.5
+
+df1$status_lab[df1$status == "Alive"]<-1
+df1$status_lab[df1$status == "Dead"]<-2
+
+# Subtype
+
+df4a<-subset(df4, df4$subtype == "HR+/HER2-" | df4$subtype == "HR-/HER2-" | df4$subtype == "HR-/HER2+" | df4$subtype == "HR+/HER2+" )
+
+df5 <- subset(df4a, year_follow_up >= 2003 & year_follow_up <= 2020 & df4a$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ subtype, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa4<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 3),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  #palette = c("darkred", "darkblue", "darkgreen"),  # Here you specify your custom colors
+  title = "Subtype",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+
+
+# SES
+
+df4a<-subset(df4, df4$stage != "Blank(s)" )
+
+df5 <- subset(df4a, year_follow_up >= 2003 & year_follow_up <= 2020 & df4a$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ ylost, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa5<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 3),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  #palette = c("darkred", "darkblue", "darkgreen"),  # Here you specify your custom colors
+  title = "SES status",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+# Poverty
+
+df4a<-subset(df4, df4$poverty != "Blank(s)" )
+
+df5 <- subset(df4a, year_follow_up >= 2003 & year_follow_up <= 2020 & df4a$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ poverty, data = df5)
+
+# Plot the survival curves with the title and legend at the bottom
+aa6<-ggsurvplot(
+  fit,
+  data = df5,
+  pval = TRUE,
+  conf.int = FALSE,
+  ggtheme = theme(
+    text = element_text(size = 12),
+    legend.title = element_blank(),  # remove legend title
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    legend.text = element_text(size = 3),
+    plot.margin = margin(t = 1, r = 1, b = 2, l = 1, unit = "lines")  # Adjust bottom margin
+  ),
+  #palette = c("darkred", "darkblue", "darkgreen"),  # Here you specify your custom colors
+  title = "Poverty",  # Title
+  legend = "bottom"  # Legend position
+)
+
+
+grid.arrange(aa4$plot, aa5$plot, aa6$plot, ncol = 3)
+
+
+
+```
+
+### Proportional Hazards Cox Model
+
+
+Age is associated with an incremental yearly increase in the hazard rate by 4% (HR 1.04, 95% CI, p<0.001). The analysis suggested protective effect of being ER-positive, which is associated with a 46% reduction in the hazard rate compared to ER-negative patients (HR 0.54, 95% CI, p<0.001). Distant stage cancers are associated with a 14.25-fold increase in the hazard rate (HR 14.25, 95% CI, p<0.001), and regional stage cancers are associated with a 2.37-fold increase (HR 2.37, 95% CI, p<0.001) compared to localized cancers. Regarding race and ethnicity, Asians/Pacific Islanders (API) exhibit a 16% reduction in the hazard rate (HR 0.84, 95% CI, p<0.001), whereas Non-Hispanic Blacks (NHB) showed a 31% increase in the hazard rate (HR 1.31, 95% CI, p<0.001). Additionally, significant gradients are observed across SES groups, with the lowest SES group experiencing a notable increase in the hazard rate (HR 1.66, 95% CI, p<0.001). Furthermore, residing in a persistent poverty census tract is associated with a modest but significant increase in the hazard rate (HR 1.09, 95% CI, p<0.001).
+
+Analysis of proportionality, colinearity and Cox model residuals is provided in Supplemntary materia.
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(kableExtra)
+df <- read_csv("C:/Users/miran/Desktop/Survival/Specialized/data/seer17_breast.csv")
+
+names(df)<-c("age1", "year_follow_up", "race", "stage", "subtype", "er", "tract", "registry_tract", "census2010",
+             "urban-area", "poverty", "ylost", "sex", "status", "year_rec", "end_calc", "time")
+
+df1<-subset(df, df$race == "Non-Hispanic White" | 
+              df$race == "Non-Hispanic Black"| df$race == "Non-Hispanic Asian or Pacific Islander" | 
+              df$race == "Hispanic (All Races)")
+
+df1$race_lab[df1$race == "Non-Hispanic White"]<-"NHW"
+df1$race_lab[df1$race == "Non-Hispanic Black"]<-"NHB"
+df1$race_lab[df1$race == "Non-Hispanic Asian or Pacific Islander"]<-"API"
+df1$race_lab[df1$race == "Hispanic (All Races)"]<-"HIS"
+
+df1$age[df1$age1 == "35-39 years"]<-37.5
+df1$age[df1$age1 == "40-44 years"]<-42.5
+df1$age[df1$age1 == "45-49 years"]<-47.5
+df1$age[df1$age1 == "50-54 years"]<-52.5
+df1$age[df1$age1 == "55-59 years"]<-57.5
+df1$age[df1$age1 == "60-64 years"]<-62.5
+df1$age[df1$age1 == "65-69 years"]<-67.5
+df1$age[df1$age1 == "70-74 years"]<-72.5
+df1$age[df1$age1 == "75-79 years"]<-77.5
+df1$age[df1$age1 == "80-84 years"]<-82.5
+
+df1$status_lab[df1$status == "Alive"]<-1
+df1$status_lab[df1$status == "Dead"]<-2
+
+
+
+df4a<-subset(df4, df4$subtype == "HR+/HER2-" | df4$subtype == "HR-/HER2-" | df4$subtype == "HR-/HER2+" | df4$subtype == "HR+/HER2+" )
+df4b<-subset(df4a, df4a$stage == "Localized" | df4a$stage == "Regional" | df4a$stage == "Distant" )
+df4c<-subset(df4b, df4b$er == "Positive" | df4b$er == "Negative" )
+df4d<-subset(df4c, df4c$poverty != "Blank(s)" )
+df4e<-subset(df4d, df4d$ylost != "Blank(s)" )
+
+
+df5 <- subset(df4e, year_follow_up >= 2003 & year_follow_up <= 2017 & df4e$time <=60 )
+surv_obj <- Surv(time = df5$time / 12, event = df5$status == 2)
+# Fit a survival curve, stratified by 'stage'
+fit <- survfit(surv_obj ~ race, data = df5)
+
+# Fit Cox PH model
+df5$race<-as.factor(df5$race)
+df5$race <- relevel(df5$race, "NHW")
+df5$stage<-as.factor(df5$stage)
+df5$stage <- relevel(df5$stage, "Localized")
+df5$ylost<-as.factor(df5$ylost)
+df5$ylost <- relevel(df5$ylost, "Group 5 (highest SES)")
+df5$poverty<-as.factor(df5$poverty)
+df5$poverty <- relevel(df5$poverty, "Not persistent poverty census tract")
+df5$age<-as.numeric(df5$age)
+
+
+cox_model <- coxph(surv_obj ~ age + er + stage + race +ylost+poverty, data = df5) 
+summary_cox <- summary(cox_model)
+tab <- as.data.frame(summary_cox$coefficients)
+
+knitr::kable(tab, caption = "Summary of Cox model")
+
+
+```
+### Relative Survival and crude probability of death
+
+## References
