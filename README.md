@@ -39,7 +39,8 @@ Malignant breast cancer data segmented by year, age, ER status, HER status, and 
 
 # **Results**
 
-##**Breast cancer and socioeconomical status**
+## **Breast cancer and socioeconomical status**
+
 https://filhoalm.github.io/Breast_cancer/Survival_snapshot/seer17_specialized_ses.html
 
 ## **Ismail's Comment on DCIS vs IDC**
